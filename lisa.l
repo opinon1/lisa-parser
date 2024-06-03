@@ -11,7 +11,6 @@ char id[100];
 %option caseless
 
 
-%x COMMENT1 COMMENT2
 %%
 
 "(*"([^*]|[\r\n]|"*"[^)])*"*)"        {
