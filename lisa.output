@@ -1,0 +1,5109 @@
+Terminals which are not used
+
+   TOK_METHODS
+   TOK_CREATION
+   TOK_SUBCLASS
+   TOK_IMPLEMENTATION
+   TOK_OTHERWISE
+   TOK_INTERFACE
+   TOK_INTRINSIC
+   TOK_UNIT
+   E
+
+
+State 294 conflicts: 1 shift/reduce, 1 reduce/reduce
+State 309 conflicts: 1 shift/reduce
+
+
+Grammar
+
+    0 $accept: script $end
+
+    1 script: program
+
+    2 program: program_heading ';' block opt_dot
+    3        | program_heading ';' uses_clause ';' block opt_dot
+
+    4 opt_dot: /* empty */
+    5        | '.'
+
+    6 program_heading: TOK_PROGRAM IDENTIFIER
+    7                | TOK_PROGRAM IDENTIFIER '(' program_parameters ')'
+
+    8 uses_clause: TOK_USES identifier_list
+
+    9 block: opt_label_declaration_part opt_constant_declaration_part opt_type_declaration_part opt_variable_declaration_part opt_procedure_and_function_declaration_part statement_part
+
+   10 program_parameters: identifier_list
+
+   11 identifier_list: IDENTIFIER
+   12                | identifier_list ',' IDENTIFIER
+
+   13 opt_label_declaration_part: /* empty */
+   14                           | label_declaration_part
+
+   15 opt_constant_declaration_part: /* empty */
+   16                              | constant_declaration_part
+
+   17 opt_type_declaration_part: /* empty */
+   18                          | type_declaration_part
+
+   19 opt_variable_declaration_part: /* empty */
+   20                              | variable_declaration_part
+
+   21 opt_procedure_and_function_declaration_part: /* empty */
+   22                                            | procedure_and_function_declaration_part
+
+   23 label_declaration_part: TOK_LABEL label_declaration_part_inner ';'
+
+   24 constant_declaration_part: TOK_CONST constant_declaration_part_inner
+
+   25 type_declaration_part: TOK_TYPE type_declaration_part_inner
+
+   26 variable_declaration_part: TOK_VAR variable_declaration_part_inner
+
+   27 procedure_and_function_declaration_part: procedure_declaration
+   28                                        | function_declaration
+   29                                        | procedure_declaration procedure_and_function_declaration_part
+   30                                        | function_declaration procedure_and_function_declaration_part
+
+   31 statement_part: compound_statement
+
+   32 label_declaration_part_inner: label
+   33                             | label ',' label_declaration_part_inner
+
+   34 label: DIGIT_SEQUENCE
+
+   35 constant_declaration_part_inner: constant_declaration
+   36                                | constant_declaration constant_declaration_part_inner
+
+   37 type_declaration_part_inner: type_declaration
+   38                            | type_declaration type_declaration_part_inner
+
+   39 variable_declaration_part_inner: variable_declaration
+   40                                | variable_declaration variable_declaration_part_inner
+
+   41 constant_declaration: IDENTIFIER '=' constant ';'
+
+   42 type_declaration: IDENTIFIER '=' type ';'
+
+   43 variable_declaration: identifier_list ':' type ';'
+
+   44 procedure_declaration: procedure_heading ';' procedure_body ';'
+
+   45 function_declaration: function_heading ';' function_body ';'
+
+   46 compound_statement: TOK_BEGIN compound_statement_inner TOK_END
+
+   47 constant: IDENTIFIER
+   48         | sign IDENTIFIER
+   49         | signed_number
+   50         | STRING
+
+   51 type: simple_type
+   52     | structured_type
+   53     | pointer_type
+   54     | IDENTIFIER
+
+   55 procedure_heading: TOK_PROCEDURE IDENTIFIER
+   56                  | TOK_PROCEDURE IDENTIFIER formal_parameter_list
+
+   57 procedure_body: block
+   58               | TOK_FORWARD
+   59               | TOK_EXTERNAL
+
+   60 function_heading: TOK_FUNCTION IDENTIFIER ':' result_type
+   61                 | TOK_FUNCTION IDENTIFIER formal_parameter_list ':' result_type
+
+   62 function_body: block
+   63              | TOK_FORWARD
+   64              | TOK_EXTERNAL
+
+   65 compound_statement_inner: statement
+   66                         | statement ';' compound_statement_inner
+
+   67 statement: /* empty */
+   68          | simple_statement
+   69          | structured_statement
+   70          | label ':'
+   71          | label ':' simple_statement
+   72          | label ':' structured_statement
+
+   73 sign: '+'
+   74     | '-'
+
+   75 signed_number: sign unsigned_number
+   76              | unsigned_number
+
+   77 simple_type: ordinal_type
+   78            | string_type
+
+   79 structured_type: structured_type_inner
+   80                | TOK_PACKED structured_type_inner
+
+   81 pointer_type: '^' IDENTIFIER
+
+   82 formal_parameter_list: '(' formal_parameter_list_inner ')'
+   83                      | '(' ')'
+
+   84 result_type: IDENTIFIER
+
+   85 simple_statement: assignment_statement
+   86                 | procedure_statement
+   87                 | goto_statement
+
+   88 structured_statement: compound_statement
+   89                     | conditional_statement
+   90                     | repetitive_statement
+   91                     | with_statement
+
+   92 unsigned_number: unsigned_real
+   93                | unsigned_integer
+
+   94 ordinal_type: subrange_type
+   95             | enumerated_type
+
+   96 string_type: TOK_STRING '[' unsigned_integer ']'
+   97            | TOK_STRING
+
+   98 structured_type_inner: array_type
+   99                      | set_type
+  100                      | file_type
+  101                      | record_type
+
+  102 array_type: TOK_ARRAY '[' array_type_inner ']' TOK_OF type
+
+  103 set_type: TOK_SET TOK_OF ordinal_type
+
+  104 file_type: TOK_FILE
+  105          | TOK_FILE TOK_OF type
+
+  106 record_type: TOK_RECORD field_list TOK_END
+
+  107 formal_parameter_list_inner: parameter_declaration
+  108                            | program_heading
+  109                            | function_heading
+  110                            | parameter_declaration ';' formal_parameter_list_inner
+  111                            | program_heading ';' formal_parameter_list_inner
+  112                            | function_heading ';' formal_parameter_list_inner
+
+  113 parameter_declaration: identifier_list ':' IDENTIFIER
+  114                      | TOK_VAR identifier_list ':' IDENTIFIER
+
+  115 assignment_statement: Identifier_or_variable TOK_ASSIGN expression
+
+  116 procedure_statement: IDENTIFIER
+  117                    | IDENTIFIER actual_parameter_list
+
+  118 goto_statement: TOK_GOTO label
+
+  119 conditional_statement: if_statement
+  120                      | case_statement
+
+  121 repetitive_statement: repeat_statement
+  122                     | while_statement
+  123                     | for_statement
+
+  124 with_statement: TOK_WITH with_statement_inner TOK_DO statement
+
+  125 unsigned_integer: DIGIT_SEQUENCE
+  126                 | HEX_DIGIT_SEQUENCE
+
+  127 unsigned_real: DIGIT_SEQUENCE '.' DIGIT_SEQUENCE
+  128              | DIGIT_SEQUENCE '.' DIGIT_SEQUENCE scale_factor
+  129              | DIGIT_SEQUENCE scale_factor
+
+  130 scale_factor: dbg_scale_factor
+
+  131 subrange_type: constant TOK_RANGE constant
+
+  132 enumerated_type: '(' identifier_list ')'
+
+  133 array_type_inner: ordinal_type
+  134                 | ordinal_type ',' array_type_inner
+
+  135 field_list: fixed_part opt_semi_colon
+  136           | variant_part opt_semi_colon
+  137           | fixed_part ';' variant_part opt_semi_colon
+
+  138 actual_parameter_list: '(' actual_parameters ')'
+  139                      | '(' ')'
+
+  140 actual_parameters: expression
+  141                  | Identifier_or_variable
+  142                  | expression ',' actual_parameters
+  143                  | Identifier_or_variable ',' actual_parameters
+
+  144 if_statement: TOK_IF expression TOK_THEN statement
+  145             | TOK_IF expression TOK_THEN statement TOK_ELSE statement
+
+  146 case_statement: TOK_CASE expression TOK_OF case_statement_inner TOK_END
+
+  147 case_statement_inner: case
+  148                     | case ';' case_statement_inner
+
+  149 opt_semi_colon: /* empty */
+  150               | ';'
+
+  151 case: case_inner ':' statement
+
+  152 case_inner: constant
+  153           | constant ',' case_inner
+
+  154 repeat_statement: TOK_REPEAT repeat_statement_inner TOK_UNTIL expression
+
+  155 repeat_statement_inner: statement
+  156                       | statement ';' repeat_statement_inner
+
+  157 while_statement: TOK_WHILE expression TOK_DO statement
+
+  158 for_statement: TOK_FOR IDENTIFIER TOK_ASSIGN expression TOK_TO expression TOK_DO statement
+  159              | TOK_FOR IDENTIFIER TOK_ASSIGN expression TOK_DOWNTO expression TOK_DO statement
+
+  160 with_statement_inner: record_variable_reference
+  161                     | record_variable_reference ',' with_statement_inner
+
+  162 record_variable_reference: Identifier_or_variable
+
+  163 Identifier_or_variable: IDENTIFIER variable_reference_inner
+
+  164 variable_reference_inner: /* empty */
+  165                         | qualifiers
+
+  166 qualifiers: qualifier
+  167           | qualifier qualifiers
+
+  168 qualifier: index
+  169          | '.' IDENTIFIER
+  170          | '^'
+
+  171 index: '[' index_inner ']'
+
+  172 index_inner: expression
+  173            | expression ',' index_inner
+
+  174 fixed_part: fixed_element_list ';'
+
+  175 fixed_element_list: fixed_element
+  176                   | fixed_element_list ';' fixed_element
+
+  177 fixed_element: identifier_list ':' type
+
+  178 variant_part: TOK_CASE tag_field_type TOK_OF variant_part_inner
+  179             | TOK_CASE IDENTIFIER ':' tag_field_type TOK_OF variant_part_inner
+
+  180 tag_field_type: IDENTIFIER
+
+  181 variant_part_inner: variant
+  182                   | variant ';' variant_part_inner
+
+  183 variant: variant_inner ':' '(' field_list ')'
+  184        | variant_inner ':' '(' ')'
+
+  185 variant_inner: constant
+  186              | constant ',' variant_inner
+
+  187 expression: simple_expression
+  188           | simple_expression arit simple_expression
+
+  189 simple_expression: sign simple_expression_inner
+  190                  | simple_expression_inner
+
+  191 arit: '='
+  192     | '<'
+  193     | '>'
+  194     | TOK_IN
+  195     | TOK_LE
+  196     | TOK_GE
+  197     | TOK_NE
+
+  198 simple_expression_inner: term
+  199                        | term '+' simple_expression_inner
+  200                        | term '-' simple_expression_inner
+  201                        | term TOK_OR simple_expression_inner
+
+  202 term: factor
+  203     | factor '*' term
+  204     | factor '/' term
+  205     | factor TOK_DIV term
+  206     | factor TOK_MOD term
+  207     | factor TOK_AND term
+
+  208 factor: Identifier_or_variable
+  209       | '@' Identifier_or_variable
+  210       | unsigned_constant
+  211       | function_call
+  212       | set_constructor
+  213       | '(' expression ')'
+  214       | TOK_NOT factor
+
+  215 unsigned_constant: TOK_NIL
+  216                  | unsigned_number
+  217                  | STRING
+
+  218 function_call: IDENTIFIER actual_parameter_list
+
+  219 set_constructor: '[' set_constructor_inner ']'
+  220                | '[' ']'
+
+  221 set_constructor_inner: member_group
+  222                      | member_group ',' set_constructor_inner
+
+  223 member_group: expression
+  224             | expression TOK_RANGE expression
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'(' (40) 7 82 83 132 138 139 183 184 213
+')' (41) 7 82 83 132 138 139 183 184 213
+'*' (42) 203
+'+' (43) 73 199
+',' (44) 12 33 134 142 143 153 161 173 186 222
+'-' (45) 74 200
+'.' (46) 5 127 128 169
+'/' (47) 204
+':' (58) 43 60 61 70 71 72 113 114 151 177 179 183 184
+';' (59) 2 3 23 41 42 43 44 45 66 110 111 112 137 148 150 156 174 176
+    182
+'<' (60) 192
+'=' (61) 41 42 191
+'>' (62) 193
+'@' (64) 209
+'[' (91) 96 102 171 219 220
+']' (93) 96 102 171 219 220
+'^' (94) 81 170
+error (256)
+TOK_AND (258) 207
+TOK_END (259) 46 106 146
+TOK_LABEL (260) 23
+TOK_PROGRAM (261) 6 7
+TOK_UNTIL (262) 154
+TOK_ARRAY (263) 102
+TOK_FILE (264) 104 105
+TOK_METHODS (265)
+TOK_RECORD (266) 106
+TOK_USES (267) 8
+TOK_BEGIN (268) 46
+TOK_FOR (269) 158 159
+TOK_MOD (270) 206
+TOK_REPEAT (271) 154
+TOK_VAR (272) 26 114
+TOK_CASE (273) 146 178 179
+TOK_FUNCTION (274) 60 61
+TOK_NIL (275) 215
+TOK_SET (276) 103
+TOK_WHILE (277) 157
+TOK_CONST (278) 24
+TOK_GOTO (279) 118
+TOK_NOT (280) 214
+TOK_STRING (281) 96 97
+TOK_WITH (282) 124
+TOK_CREATION (283)
+TOK_IF (284) 144 145
+TOK_OF (285) 102 103 105 146 178 179
+TOK_SUBCLASS (286)
+TOK_DIV (287) 205
+TOK_IMPLEMENTATION (288)
+TOK_OR (289) 201
+TOK_THEN (290) 144 145
+TOK_DOWNTO (291) 159
+TOK_IN (292) 194
+TOK_OTHERWISE (293)
+TOK_TO (294) 158
+TOK_DO (295) 124 157 158 159
+TOK_INTERFACE (296)
+TOK_PACKED (297) 80
+TOK_TYPE (298) 25
+TOK_ELSE (299) 145
+TOK_INTRINSIC (300)
+TOK_PROCEDURE (301) 55 56
+TOK_UNIT (302)
+TOK_FORWARD (303) 58 63
+TOK_EXTERNAL (304) 59 64
+TOK_NE (305) 197
+TOK_LE (306) 195
+TOK_GE (307) 196
+TOK_ASSIGN (308) 115 158 159
+TOK_RANGE (309) 131 224
+DIGIT_SEQUENCE (310) 34 125 127 128 129
+HEX_DIGIT_SEQUENCE (311) 126
+E (312)
+STRING (313) 50 217
+dbg_scale_factor (314) 130
+DUM_ELSE (315)
+IDENTIFIER (316) 6 7 11 12 41 42 47 48 54 55 56 60 61 81 84 113 114
+    116 117 158 159 163 169 179 180 218
+
+
+Nonterminals, with rules where they appear
+
+$accept (79)
+    on left: 0
+script (80)
+    on left: 1, on right: 0
+program (81)
+    on left: 2 3, on right: 1
+opt_dot (82)
+    on left: 4 5, on right: 2 3
+program_heading (83)
+    on left: 6 7, on right: 2 3 108 111
+uses_clause (84)
+    on left: 8, on right: 3
+block (85)
+    on left: 9, on right: 2 3 57 62
+program_parameters (86)
+    on left: 10, on right: 7
+identifier_list (87)
+    on left: 11 12, on right: 8 10 12 43 113 114 132 177
+opt_label_declaration_part (88)
+    on left: 13 14, on right: 9
+opt_constant_declaration_part (89)
+    on left: 15 16, on right: 9
+opt_type_declaration_part (90)
+    on left: 17 18, on right: 9
+opt_variable_declaration_part (91)
+    on left: 19 20, on right: 9
+opt_procedure_and_function_declaration_part (92)
+    on left: 21 22, on right: 9
+label_declaration_part (93)
+    on left: 23, on right: 14
+constant_declaration_part (94)
+    on left: 24, on right: 16
+type_declaration_part (95)
+    on left: 25, on right: 18
+variable_declaration_part (96)
+    on left: 26, on right: 20
+procedure_and_function_declaration_part (97)
+    on left: 27 28 29 30, on right: 22 29 30
+statement_part (98)
+    on left: 31, on right: 9
+label_declaration_part_inner (99)
+    on left: 32 33, on right: 23 33
+label (100)
+    on left: 34, on right: 32 33 70 71 72 118
+constant_declaration_part_inner (101)
+    on left: 35 36, on right: 24 36
+type_declaration_part_inner (102)
+    on left: 37 38, on right: 25 38
+variable_declaration_part_inner (103)
+    on left: 39 40, on right: 26 40
+constant_declaration (104)
+    on left: 41, on right: 35 36
+type_declaration (105)
+    on left: 42, on right: 37 38
+variable_declaration (106)
+    on left: 43, on right: 39 40
+procedure_declaration (107)
+    on left: 44, on right: 27 29
+function_declaration (108)
+    on left: 45, on right: 28 30
+compound_statement (109)
+    on left: 46, on right: 31 88
+constant (110)
+    on left: 47 48 49 50, on right: 41 131 152 153 185 186
+type (111)
+    on left: 51 52 53 54, on right: 42 43 102 105 177
+procedure_heading (112)
+    on left: 55 56, on right: 44
+procedure_body (113)
+    on left: 57 58 59, on right: 44
+function_heading (114)
+    on left: 60 61, on right: 45 109 112
+function_body (115)
+    on left: 62 63 64, on right: 45
+compound_statement_inner (116)
+    on left: 65 66, on right: 46 66
+statement (117)
+    on left: 67 68 69 70 71 72, on right: 65 66 124 144 145 151 155
+    156 157 158 159
+sign (118)
+    on left: 73 74, on right: 48 75 189
+signed_number (119)
+    on left: 75 76, on right: 49
+simple_type (120)
+    on left: 77 78, on right: 51
+structured_type (121)
+    on left: 79 80, on right: 52
+pointer_type (122)
+    on left: 81, on right: 53
+formal_parameter_list (123)
+    on left: 82 83, on right: 56 61
+result_type (124)
+    on left: 84, on right: 60 61
+simple_statement (125)
+    on left: 85 86 87, on right: 68 71
+structured_statement (126)
+    on left: 88 89 90 91, on right: 69 72
+unsigned_number (127)
+    on left: 92 93, on right: 75 76 216
+ordinal_type (128)
+    on left: 94 95, on right: 77 103 133 134
+string_type (129)
+    on left: 96 97, on right: 78
+structured_type_inner (130)
+    on left: 98 99 100 101, on right: 79 80
+array_type (131)
+    on left: 102, on right: 98
+set_type (132)
+    on left: 103, on right: 99
+file_type (133)
+    on left: 104 105, on right: 100
+record_type (134)
+    on left: 106, on right: 101
+formal_parameter_list_inner (135)
+    on left: 107 108 109 110 111 112, on right: 82 110 111 112
+parameter_declaration (136)
+    on left: 113 114, on right: 107 110
+assignment_statement (137)
+    on left: 115, on right: 85
+procedure_statement (138)
+    on left: 116 117, on right: 86
+goto_statement (139)
+    on left: 118, on right: 87
+conditional_statement (140)
+    on left: 119 120, on right: 89
+repetitive_statement (141)
+    on left: 121 122 123, on right: 90
+with_statement (142)
+    on left: 124, on right: 91
+unsigned_integer (143)
+    on left: 125 126, on right: 93 96
+unsigned_real (144)
+    on left: 127 128 129, on right: 92
+scale_factor (145)
+    on left: 130, on right: 128 129
+subrange_type (146)
+    on left: 131, on right: 94
+enumerated_type (147)
+    on left: 132, on right: 95
+array_type_inner (148)
+    on left: 133 134, on right: 102 134
+field_list (149)
+    on left: 135 136 137, on right: 106 183
+actual_parameter_list (150)
+    on left: 138 139, on right: 117 218
+actual_parameters (151)
+    on left: 140 141 142 143, on right: 138 142 143
+if_statement (152)
+    on left: 144 145, on right: 119
+case_statement (153)
+    on left: 146, on right: 120
+case_statement_inner (154)
+    on left: 147 148, on right: 146 148
+opt_semi_colon (155)
+    on left: 149 150, on right: 135 136 137
+case (156)
+    on left: 151, on right: 147 148
+case_inner (157)
+    on left: 152 153, on right: 151 153
+repeat_statement (158)
+    on left: 154, on right: 121
+repeat_statement_inner (159)
+    on left: 155 156, on right: 154 156
+while_statement (160)
+    on left: 157, on right: 122
+for_statement (161)
+    on left: 158 159, on right: 123
+with_statement_inner (162)
+    on left: 160 161, on right: 124 161
+record_variable_reference (163)
+    on left: 162, on right: 160 161
+Identifier_or_variable (164)
+    on left: 163, on right: 115 141 143 162 208 209
+variable_reference_inner (165)
+    on left: 164 165, on right: 163
+qualifiers (166)
+    on left: 166 167, on right: 165 167
+qualifier (167)
+    on left: 168 169 170, on right: 166 167
+index (168)
+    on left: 171, on right: 168
+index_inner (169)
+    on left: 172 173, on right: 171 173
+fixed_part (170)
+    on left: 174, on right: 135 137
+fixed_element_list (171)
+    on left: 175 176, on right: 174 176
+fixed_element (172)
+    on left: 177, on right: 175 176
+variant_part (173)
+    on left: 178 179, on right: 136 137
+tag_field_type (174)
+    on left: 180, on right: 178 179
+variant_part_inner (175)
+    on left: 181 182, on right: 178 179 182
+variant (176)
+    on left: 183 184, on right: 181 182
+variant_inner (177)
+    on left: 185 186, on right: 183 184 186
+expression (178)
+    on left: 187 188, on right: 115 140 142 144 145 146 154 157 158
+    159 172 173 213 223 224
+simple_expression (179)
+    on left: 189 190, on right: 187 188
+arit (180)
+    on left: 191 192 193 194 195 196 197, on right: 188
+simple_expression_inner (181)
+    on left: 198 199 200 201, on right: 189 190 199 200 201
+term (182)
+    on left: 202 203 204 205 206 207, on right: 198 199 200 201 203
+    204 205 206 207
+factor (183)
+    on left: 208 209 210 211 212 213 214, on right: 202 203 204 205
+    206 207 214
+unsigned_constant (184)
+    on left: 215 216 217, on right: 210
+function_call (185)
+    on left: 218, on right: 211
+set_constructor (186)
+    on left: 219 220, on right: 212
+set_constructor_inner (187)
+    on left: 221 222, on right: 219 222
+member_group (188)
+    on left: 223 224, on right: 221 222
+
+
+state 0
+
+    0 $accept: . script $end
+
+    TOK_PROGRAM  shift, and go to state 1
+
+    script           go to state 2
+    program          go to state 3
+    program_heading  go to state 4
+
+
+state 1
+
+    6 program_heading: TOK_PROGRAM . IDENTIFIER
+    7                | TOK_PROGRAM . IDENTIFIER '(' program_parameters ')'
+
+    IDENTIFIER  shift, and go to state 5
+
+
+state 2
+
+    0 $accept: script . $end
+
+    $end  shift, and go to state 6
+
+
+state 3
+
+    1 script: program .
+
+    $default  reduce using rule 1 (script)
+
+
+state 4
+
+    2 program: program_heading . ';' block opt_dot
+    3        | program_heading . ';' uses_clause ';' block opt_dot
+
+    ';'  shift, and go to state 7
+
+
+state 5
+
+    6 program_heading: TOK_PROGRAM IDENTIFIER .
+    7                | TOK_PROGRAM IDENTIFIER . '(' program_parameters ')'
+
+    '('  shift, and go to state 8
+
+    $default  reduce using rule 6 (program_heading)
+
+
+state 6
+
+    0 $accept: script $end .
+
+    $default  accept
+
+
+state 7
+
+    2 program: program_heading ';' . block opt_dot
+    3        | program_heading ';' . uses_clause ';' block opt_dot
+
+    TOK_LABEL  shift, and go to state 9
+    TOK_USES   shift, and go to state 10
+
+    $default  reduce using rule 13 (opt_label_declaration_part)
+
+    uses_clause                 go to state 11
+    block                       go to state 12
+    opt_label_declaration_part  go to state 13
+    label_declaration_part      go to state 14
+
+
+state 8
+
+    7 program_heading: TOK_PROGRAM IDENTIFIER '(' . program_parameters ')'
+
+    IDENTIFIER  shift, and go to state 15
+
+    program_parameters  go to state 16
+    identifier_list     go to state 17
+
+
+state 9
+
+   23 label_declaration_part: TOK_LABEL . label_declaration_part_inner ';'
+
+    DIGIT_SEQUENCE  shift, and go to state 18
+
+    label_declaration_part_inner  go to state 19
+    label                         go to state 20
+
+
+state 10
+
+    8 uses_clause: TOK_USES . identifier_list
+
+    IDENTIFIER  shift, and go to state 15
+
+    identifier_list  go to state 21
+
+
+state 11
+
+    3 program: program_heading ';' uses_clause . ';' block opt_dot
+
+    ';'  shift, and go to state 22
+
+
+state 12
+
+    2 program: program_heading ';' block . opt_dot
+
+    '.'  shift, and go to state 23
+
+    $default  reduce using rule 4 (opt_dot)
+
+    opt_dot  go to state 24
+
+
+state 13
+
+    9 block: opt_label_declaration_part . opt_constant_declaration_part opt_type_declaration_part opt_variable_declaration_part opt_procedure_and_function_declaration_part statement_part
+
+    TOK_CONST  shift, and go to state 25
+
+    $default  reduce using rule 15 (opt_constant_declaration_part)
+
+    opt_constant_declaration_part  go to state 26
+    constant_declaration_part      go to state 27
+
+
+state 14
+
+   14 opt_label_declaration_part: label_declaration_part .
+
+    $default  reduce using rule 14 (opt_label_declaration_part)
+
+
+state 15
+
+   11 identifier_list: IDENTIFIER .
+
+    $default  reduce using rule 11 (identifier_list)
+
+
+state 16
+
+    7 program_heading: TOK_PROGRAM IDENTIFIER '(' program_parameters . ')'
+
+    ')'  shift, and go to state 28
+
+
+state 17
+
+   10 program_parameters: identifier_list .
+   12 identifier_list: identifier_list . ',' IDENTIFIER
+
+    ','  shift, and go to state 29
+
+    $default  reduce using rule 10 (program_parameters)
+
+
+state 18
+
+   34 label: DIGIT_SEQUENCE .
+
+    $default  reduce using rule 34 (label)
+
+
+state 19
+
+   23 label_declaration_part: TOK_LABEL label_declaration_part_inner . ';'
+
+    ';'  shift, and go to state 30
+
+
+state 20
+
+   32 label_declaration_part_inner: label .
+   33                             | label . ',' label_declaration_part_inner
+
+    ','  shift, and go to state 31
+
+    $default  reduce using rule 32 (label_declaration_part_inner)
+
+
+state 21
+
+    8 uses_clause: TOK_USES identifier_list .
+   12 identifier_list: identifier_list . ',' IDENTIFIER
+
+    ','  shift, and go to state 29
+
+    $default  reduce using rule 8 (uses_clause)
+
+
+state 22
+
+    3 program: program_heading ';' uses_clause ';' . block opt_dot
+
+    TOK_LABEL  shift, and go to state 9
+
+    $default  reduce using rule 13 (opt_label_declaration_part)
+
+    block                       go to state 32
+    opt_label_declaration_part  go to state 13
+    label_declaration_part      go to state 14
+
+
+state 23
+
+    5 opt_dot: '.' .
+
+    $default  reduce using rule 5 (opt_dot)
+
+
+state 24
+
+    2 program: program_heading ';' block opt_dot .
+
+    $default  reduce using rule 2 (program)
+
+
+state 25
+
+   24 constant_declaration_part: TOK_CONST . constant_declaration_part_inner
+
+    IDENTIFIER  shift, and go to state 33
+
+    constant_declaration_part_inner  go to state 34
+    constant_declaration             go to state 35
+
+
+state 26
+
+    9 block: opt_label_declaration_part opt_constant_declaration_part . opt_type_declaration_part opt_variable_declaration_part opt_procedure_and_function_declaration_part statement_part
+
+    TOK_TYPE  shift, and go to state 36
+
+    $default  reduce using rule 17 (opt_type_declaration_part)
+
+    opt_type_declaration_part  go to state 37
+    type_declaration_part      go to state 38
+
+
+state 27
+
+   16 opt_constant_declaration_part: constant_declaration_part .
+
+    $default  reduce using rule 16 (opt_constant_declaration_part)
+
+
+state 28
+
+    7 program_heading: TOK_PROGRAM IDENTIFIER '(' program_parameters ')' .
+
+    $default  reduce using rule 7 (program_heading)
+
+
+state 29
+
+   12 identifier_list: identifier_list ',' . IDENTIFIER
+
+    IDENTIFIER  shift, and go to state 39
+
+
+state 30
+
+   23 label_declaration_part: TOK_LABEL label_declaration_part_inner ';' .
+
+    $default  reduce using rule 23 (label_declaration_part)
+
+
+state 31
+
+   33 label_declaration_part_inner: label ',' . label_declaration_part_inner
+
+    DIGIT_SEQUENCE  shift, and go to state 18
+
+    label_declaration_part_inner  go to state 40
+    label                         go to state 20
+
+
+state 32
+
+    3 program: program_heading ';' uses_clause ';' block . opt_dot
+
+    '.'  shift, and go to state 23
+
+    $default  reduce using rule 4 (opt_dot)
+
+    opt_dot  go to state 41
+
+
+state 33
+
+   41 constant_declaration: IDENTIFIER . '=' constant ';'
+
+    '='  shift, and go to state 42
+
+
+state 34
+
+   24 constant_declaration_part: TOK_CONST constant_declaration_part_inner .
+
+    $default  reduce using rule 24 (constant_declaration_part)
+
+
+state 35
+
+   35 constant_declaration_part_inner: constant_declaration .
+   36                                | constant_declaration . constant_declaration_part_inner
+
+    IDENTIFIER  shift, and go to state 33
+
+    $default  reduce using rule 35 (constant_declaration_part_inner)
+
+    constant_declaration_part_inner  go to state 43
+    constant_declaration             go to state 35
+
+
+state 36
+
+   25 type_declaration_part: TOK_TYPE . type_declaration_part_inner
+
+    IDENTIFIER  shift, and go to state 44
+
+    type_declaration_part_inner  go to state 45
+    type_declaration             go to state 46
+
+
+state 37
+
+    9 block: opt_label_declaration_part opt_constant_declaration_part opt_type_declaration_part . opt_variable_declaration_part opt_procedure_and_function_declaration_part statement_part
+
+    TOK_VAR  shift, and go to state 47
+
+    $default  reduce using rule 19 (opt_variable_declaration_part)
+
+    opt_variable_declaration_part  go to state 48
+    variable_declaration_part      go to state 49
+
+
+state 38
+
+   18 opt_type_declaration_part: type_declaration_part .
+
+    $default  reduce using rule 18 (opt_type_declaration_part)
+
+
+state 39
+
+   12 identifier_list: identifier_list ',' IDENTIFIER .
+
+    $default  reduce using rule 12 (identifier_list)
+
+
+state 40
+
+   33 label_declaration_part_inner: label ',' label_declaration_part_inner .
+
+    $default  reduce using rule 33 (label_declaration_part_inner)
+
+
+state 41
+
+    3 program: program_heading ';' uses_clause ';' block opt_dot .
+
+    $default  reduce using rule 3 (program)
+
+
+state 42
+
+   41 constant_declaration: IDENTIFIER '=' . constant ';'
+
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 52
+    '+'                 shift, and go to state 53
+    '-'                 shift, and go to state 54
+    IDENTIFIER          shift, and go to state 55
+
+    constant          go to state 56
+    sign              go to state 57
+    signed_number     go to state 58
+    unsigned_number   go to state 59
+    unsigned_integer  go to state 60
+    unsigned_real     go to state 61
+
+
+state 43
+
+   36 constant_declaration_part_inner: constant_declaration constant_declaration_part_inner .
+
+    $default  reduce using rule 36 (constant_declaration_part_inner)
+
+
+state 44
+
+   42 type_declaration: IDENTIFIER . '=' type ';'
+
+    '='  shift, and go to state 62
+
+
+state 45
+
+   25 type_declaration_part: TOK_TYPE type_declaration_part_inner .
+
+    $default  reduce using rule 25 (type_declaration_part)
+
+
+state 46
+
+   37 type_declaration_part_inner: type_declaration .
+   38                            | type_declaration . type_declaration_part_inner
+
+    IDENTIFIER  shift, and go to state 44
+
+    $default  reduce using rule 37 (type_declaration_part_inner)
+
+    type_declaration_part_inner  go to state 63
+    type_declaration             go to state 46
+
+
+state 47
+
+   26 variable_declaration_part: TOK_VAR . variable_declaration_part_inner
+
+    IDENTIFIER  shift, and go to state 15
+
+    identifier_list                  go to state 64
+    variable_declaration_part_inner  go to state 65
+    variable_declaration             go to state 66
+
+
+state 48
+
+    9 block: opt_label_declaration_part opt_constant_declaration_part opt_type_declaration_part opt_variable_declaration_part . opt_procedure_and_function_declaration_part statement_part
+
+    TOK_FUNCTION   shift, and go to state 67
+    TOK_PROCEDURE  shift, and go to state 68
+
+    $default  reduce using rule 21 (opt_procedure_and_function_declaration_part)
+
+    opt_procedure_and_function_declaration_part  go to state 69
+    procedure_and_function_declaration_part      go to state 70
+    procedure_declaration                        go to state 71
+    function_declaration                         go to state 72
+    procedure_heading                            go to state 73
+    function_heading                             go to state 74
+
+
+state 49
+
+   20 opt_variable_declaration_part: variable_declaration_part .
+
+    $default  reduce using rule 20 (opt_variable_declaration_part)
+
+
+state 50
+
+  125 unsigned_integer: DIGIT_SEQUENCE .
+  127 unsigned_real: DIGIT_SEQUENCE . '.' DIGIT_SEQUENCE
+  128              | DIGIT_SEQUENCE . '.' DIGIT_SEQUENCE scale_factor
+  129              | DIGIT_SEQUENCE . scale_factor
+
+    dbg_scale_factor  shift, and go to state 75
+    '.'               shift, and go to state 76
+
+    $default  reduce using rule 125 (unsigned_integer)
+
+    scale_factor  go to state 77
+
+
+state 51
+
+  126 unsigned_integer: HEX_DIGIT_SEQUENCE .
+
+    $default  reduce using rule 126 (unsigned_integer)
+
+
+state 52
+
+   50 constant: STRING .
+
+    $default  reduce using rule 50 (constant)
+
+
+state 53
+
+   73 sign: '+' .
+
+    $default  reduce using rule 73 (sign)
+
+
+state 54
+
+   74 sign: '-' .
+
+    $default  reduce using rule 74 (sign)
+
+
+state 55
+
+   47 constant: IDENTIFIER .
+
+    $default  reduce using rule 47 (constant)
+
+
+state 56
+
+   41 constant_declaration: IDENTIFIER '=' constant . ';'
+
+    ';'  shift, and go to state 78
+
+
+state 57
+
+   48 constant: sign . IDENTIFIER
+   75 signed_number: sign . unsigned_number
+
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    IDENTIFIER          shift, and go to state 79
+
+    unsigned_number   go to state 80
+    unsigned_integer  go to state 60
+    unsigned_real     go to state 61
+
+
+state 58
+
+   49 constant: signed_number .
+
+    $default  reduce using rule 49 (constant)
+
+
+state 59
+
+   76 signed_number: unsigned_number .
+
+    $default  reduce using rule 76 (signed_number)
+
+
+state 60
+
+   93 unsigned_number: unsigned_integer .
+
+    $default  reduce using rule 93 (unsigned_number)
+
+
+state 61
+
+   92 unsigned_number: unsigned_real .
+
+    $default  reduce using rule 92 (unsigned_number)
+
+
+state 62
+
+   42 type_declaration: IDENTIFIER '=' . type ';'
+
+    TOK_ARRAY           shift, and go to state 81
+    TOK_FILE            shift, and go to state 82
+    TOK_RECORD          shift, and go to state 83
+    TOK_SET             shift, and go to state 84
+    TOK_STRING          shift, and go to state 85
+    TOK_PACKED          shift, and go to state 86
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 52
+    '+'                 shift, and go to state 53
+    '-'                 shift, and go to state 54
+    IDENTIFIER          shift, and go to state 87
+    '('                 shift, and go to state 88
+    '^'                 shift, and go to state 89
+
+    constant               go to state 90
+    type                   go to state 91
+    sign                   go to state 57
+    signed_number          go to state 58
+    simple_type            go to state 92
+    structured_type        go to state 93
+    pointer_type           go to state 94
+    unsigned_number        go to state 59
+    ordinal_type           go to state 95
+    string_type            go to state 96
+    structured_type_inner  go to state 97
+    array_type             go to state 98
+    set_type               go to state 99
+    file_type              go to state 100
+    record_type            go to state 101
+    unsigned_integer       go to state 60
+    unsigned_real          go to state 61
+    subrange_type          go to state 102
+    enumerated_type        go to state 103
+
+
+state 63
+
+   38 type_declaration_part_inner: type_declaration type_declaration_part_inner .
+
+    $default  reduce using rule 38 (type_declaration_part_inner)
+
+
+state 64
+
+   12 identifier_list: identifier_list . ',' IDENTIFIER
+   43 variable_declaration: identifier_list . ':' type ';'
+
+    ','  shift, and go to state 29
+    ':'  shift, and go to state 104
+
+
+state 65
+
+   26 variable_declaration_part: TOK_VAR variable_declaration_part_inner .
+
+    $default  reduce using rule 26 (variable_declaration_part)
+
+
+state 66
+
+   39 variable_declaration_part_inner: variable_declaration .
+   40                                | variable_declaration . variable_declaration_part_inner
+
+    IDENTIFIER  shift, and go to state 15
+
+    $default  reduce using rule 39 (variable_declaration_part_inner)
+
+    identifier_list                  go to state 64
+    variable_declaration_part_inner  go to state 105
+    variable_declaration             go to state 66
+
+
+state 67
+
+   60 function_heading: TOK_FUNCTION . IDENTIFIER ':' result_type
+   61                 | TOK_FUNCTION . IDENTIFIER formal_parameter_list ':' result_type
+
+    IDENTIFIER  shift, and go to state 106
+
+
+state 68
+
+   55 procedure_heading: TOK_PROCEDURE . IDENTIFIER
+   56                  | TOK_PROCEDURE . IDENTIFIER formal_parameter_list
+
+    IDENTIFIER  shift, and go to state 107
+
+
+state 69
+
+    9 block: opt_label_declaration_part opt_constant_declaration_part opt_type_declaration_part opt_variable_declaration_part opt_procedure_and_function_declaration_part . statement_part
+
+    TOK_BEGIN  shift, and go to state 108
+
+    statement_part      go to state 109
+    compound_statement  go to state 110
+
+
+state 70
+
+   22 opt_procedure_and_function_declaration_part: procedure_and_function_declaration_part .
+
+    $default  reduce using rule 22 (opt_procedure_and_function_declaration_part)
+
+
+state 71
+
+   27 procedure_and_function_declaration_part: procedure_declaration .
+   29                                        | procedure_declaration . procedure_and_function_declaration_part
+
+    TOK_FUNCTION   shift, and go to state 67
+    TOK_PROCEDURE  shift, and go to state 68
+
+    $default  reduce using rule 27 (procedure_and_function_declaration_part)
+
+    procedure_and_function_declaration_part  go to state 111
+    procedure_declaration                    go to state 71
+    function_declaration                     go to state 72
+    procedure_heading                        go to state 73
+    function_heading                         go to state 74
+
+
+state 72
+
+   28 procedure_and_function_declaration_part: function_declaration .
+   30                                        | function_declaration . procedure_and_function_declaration_part
+
+    TOK_FUNCTION   shift, and go to state 67
+    TOK_PROCEDURE  shift, and go to state 68
+
+    $default  reduce using rule 28 (procedure_and_function_declaration_part)
+
+    procedure_and_function_declaration_part  go to state 112
+    procedure_declaration                    go to state 71
+    function_declaration                     go to state 72
+    procedure_heading                        go to state 73
+    function_heading                         go to state 74
+
+
+state 73
+
+   44 procedure_declaration: procedure_heading . ';' procedure_body ';'
+
+    ';'  shift, and go to state 113
+
+
+state 74
+
+   45 function_declaration: function_heading . ';' function_body ';'
+
+    ';'  shift, and go to state 114
+
+
+state 75
+
+  130 scale_factor: dbg_scale_factor .
+
+    $default  reduce using rule 130 (scale_factor)
+
+
+state 76
+
+  127 unsigned_real: DIGIT_SEQUENCE '.' . DIGIT_SEQUENCE
+  128              | DIGIT_SEQUENCE '.' . DIGIT_SEQUENCE scale_factor
+
+    DIGIT_SEQUENCE  shift, and go to state 115
+
+
+state 77
+
+  129 unsigned_real: DIGIT_SEQUENCE scale_factor .
+
+    $default  reduce using rule 129 (unsigned_real)
+
+
+state 78
+
+   41 constant_declaration: IDENTIFIER '=' constant ';' .
+
+    $default  reduce using rule 41 (constant_declaration)
+
+
+state 79
+
+   48 constant: sign IDENTIFIER .
+
+    $default  reduce using rule 48 (constant)
+
+
+state 80
+
+   75 signed_number: sign unsigned_number .
+
+    $default  reduce using rule 75 (signed_number)
+
+
+state 81
+
+  102 array_type: TOK_ARRAY . '[' array_type_inner ']' TOK_OF type
+
+    '['  shift, and go to state 116
+
+
+state 82
+
+  104 file_type: TOK_FILE .
+  105          | TOK_FILE . TOK_OF type
+
+    TOK_OF  shift, and go to state 117
+
+    $default  reduce using rule 104 (file_type)
+
+
+state 83
+
+  106 record_type: TOK_RECORD . field_list TOK_END
+
+    TOK_CASE    shift, and go to state 118
+    IDENTIFIER  shift, and go to state 15
+
+    identifier_list     go to state 119
+    field_list          go to state 120
+    fixed_part          go to state 121
+    fixed_element_list  go to state 122
+    fixed_element       go to state 123
+    variant_part        go to state 124
+
+
+state 84
+
+  103 set_type: TOK_SET . TOK_OF ordinal_type
+
+    TOK_OF  shift, and go to state 125
+
+
+state 85
+
+   96 string_type: TOK_STRING . '[' unsigned_integer ']'
+   97            | TOK_STRING .
+
+    '['  shift, and go to state 126
+
+    $default  reduce using rule 97 (string_type)
+
+
+state 86
+
+   80 structured_type: TOK_PACKED . structured_type_inner
+
+    TOK_ARRAY   shift, and go to state 81
+    TOK_FILE    shift, and go to state 82
+    TOK_RECORD  shift, and go to state 83
+    TOK_SET     shift, and go to state 84
+
+    structured_type_inner  go to state 127
+    array_type             go to state 98
+    set_type               go to state 99
+    file_type              go to state 100
+    record_type            go to state 101
+
+
+state 87
+
+   47 constant: IDENTIFIER .
+   54 type: IDENTIFIER .
+
+    ';'       reduce using rule 54 (type)
+    $default  reduce using rule 47 (constant)
+
+
+state 88
+
+  132 enumerated_type: '(' . identifier_list ')'
+
+    IDENTIFIER  shift, and go to state 15
+
+    identifier_list  go to state 128
+
+
+state 89
+
+   81 pointer_type: '^' . IDENTIFIER
+
+    IDENTIFIER  shift, and go to state 129
+
+
+state 90
+
+  131 subrange_type: constant . TOK_RANGE constant
+
+    TOK_RANGE  shift, and go to state 130
+
+
+state 91
+
+   42 type_declaration: IDENTIFIER '=' type . ';'
+
+    ';'  shift, and go to state 131
+
+
+state 92
+
+   51 type: simple_type .
+
+    $default  reduce using rule 51 (type)
+
+
+state 93
+
+   52 type: structured_type .
+
+    $default  reduce using rule 52 (type)
+
+
+state 94
+
+   53 type: pointer_type .
+
+    $default  reduce using rule 53 (type)
+
+
+state 95
+
+   77 simple_type: ordinal_type .
+
+    $default  reduce using rule 77 (simple_type)
+
+
+state 96
+
+   78 simple_type: string_type .
+
+    $default  reduce using rule 78 (simple_type)
+
+
+state 97
+
+   79 structured_type: structured_type_inner .
+
+    $default  reduce using rule 79 (structured_type)
+
+
+state 98
+
+   98 structured_type_inner: array_type .
+
+    $default  reduce using rule 98 (structured_type_inner)
+
+
+state 99
+
+   99 structured_type_inner: set_type .
+
+    $default  reduce using rule 99 (structured_type_inner)
+
+
+state 100
+
+  100 structured_type_inner: file_type .
+
+    $default  reduce using rule 100 (structured_type_inner)
+
+
+state 101
+
+  101 structured_type_inner: record_type .
+
+    $default  reduce using rule 101 (structured_type_inner)
+
+
+state 102
+
+   94 ordinal_type: subrange_type .
+
+    $default  reduce using rule 94 (ordinal_type)
+
+
+state 103
+
+   95 ordinal_type: enumerated_type .
+
+    $default  reduce using rule 95 (ordinal_type)
+
+
+state 104
+
+   43 variable_declaration: identifier_list ':' . type ';'
+
+    TOK_ARRAY           shift, and go to state 81
+    TOK_FILE            shift, and go to state 82
+    TOK_RECORD          shift, and go to state 83
+    TOK_SET             shift, and go to state 84
+    TOK_STRING          shift, and go to state 85
+    TOK_PACKED          shift, and go to state 86
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 52
+    '+'                 shift, and go to state 53
+    '-'                 shift, and go to state 54
+    IDENTIFIER          shift, and go to state 87
+    '('                 shift, and go to state 88
+    '^'                 shift, and go to state 89
+
+    constant               go to state 90
+    type                   go to state 132
+    sign                   go to state 57
+    signed_number          go to state 58
+    simple_type            go to state 92
+    structured_type        go to state 93
+    pointer_type           go to state 94
+    unsigned_number        go to state 59
+    ordinal_type           go to state 95
+    string_type            go to state 96
+    structured_type_inner  go to state 97
+    array_type             go to state 98
+    set_type               go to state 99
+    file_type              go to state 100
+    record_type            go to state 101
+    unsigned_integer       go to state 60
+    unsigned_real          go to state 61
+    subrange_type          go to state 102
+    enumerated_type        go to state 103
+
+
+state 105
+
+   40 variable_declaration_part_inner: variable_declaration variable_declaration_part_inner .
+
+    $default  reduce using rule 40 (variable_declaration_part_inner)
+
+
+state 106
+
+   60 function_heading: TOK_FUNCTION IDENTIFIER . ':' result_type
+   61                 | TOK_FUNCTION IDENTIFIER . formal_parameter_list ':' result_type
+
+    '('  shift, and go to state 133
+    ':'  shift, and go to state 134
+
+    formal_parameter_list  go to state 135
+
+
+state 107
+
+   55 procedure_heading: TOK_PROCEDURE IDENTIFIER .
+   56                  | TOK_PROCEDURE IDENTIFIER . formal_parameter_list
+
+    '('  shift, and go to state 133
+
+    $default  reduce using rule 55 (procedure_heading)
+
+    formal_parameter_list  go to state 136
+
+
+state 108
+
+   46 compound_statement: TOK_BEGIN . compound_statement_inner TOK_END
+
+    TOK_BEGIN       shift, and go to state 108
+    TOK_FOR         shift, and go to state 137
+    TOK_REPEAT      shift, and go to state 138
+    TOK_CASE        shift, and go to state 139
+    TOK_WHILE       shift, and go to state 140
+    TOK_GOTO        shift, and go to state 141
+    TOK_WITH        shift, and go to state 142
+    TOK_IF          shift, and go to state 143
+    DIGIT_SEQUENCE  shift, and go to state 18
+    IDENTIFIER      shift, and go to state 144
+
+    $default  reduce using rule 67 (statement)
+
+    label                     go to state 145
+    compound_statement        go to state 146
+    compound_statement_inner  go to state 147
+    statement                 go to state 148
+    simple_statement          go to state 149
+    structured_statement      go to state 150
+    assignment_statement      go to state 151
+    procedure_statement       go to state 152
+    goto_statement            go to state 153
+    conditional_statement     go to state 154
+    repetitive_statement      go to state 155
+    with_statement            go to state 156
+    if_statement              go to state 157
+    case_statement            go to state 158
+    repeat_statement          go to state 159
+    while_statement           go to state 160
+    for_statement             go to state 161
+    Identifier_or_variable    go to state 162
+
+
+state 109
+
+    9 block: opt_label_declaration_part opt_constant_declaration_part opt_type_declaration_part opt_variable_declaration_part opt_procedure_and_function_declaration_part statement_part .
+
+    $default  reduce using rule 9 (block)
+
+
+state 110
+
+   31 statement_part: compound_statement .
+
+    $default  reduce using rule 31 (statement_part)
+
+
+state 111
+
+   29 procedure_and_function_declaration_part: procedure_declaration procedure_and_function_declaration_part .
+
+    $default  reduce using rule 29 (procedure_and_function_declaration_part)
+
+
+state 112
+
+   30 procedure_and_function_declaration_part: function_declaration procedure_and_function_declaration_part .
+
+    $default  reduce using rule 30 (procedure_and_function_declaration_part)
+
+
+state 113
+
+   44 procedure_declaration: procedure_heading ';' . procedure_body ';'
+
+    TOK_LABEL     shift, and go to state 9
+    TOK_FORWARD   shift, and go to state 163
+    TOK_EXTERNAL  shift, and go to state 164
+
+    $default  reduce using rule 13 (opt_label_declaration_part)
+
+    block                       go to state 165
+    opt_label_declaration_part  go to state 13
+    label_declaration_part      go to state 14
+    procedure_body              go to state 166
+
+
+state 114
+
+   45 function_declaration: function_heading ';' . function_body ';'
+
+    TOK_LABEL     shift, and go to state 9
+    TOK_FORWARD   shift, and go to state 167
+    TOK_EXTERNAL  shift, and go to state 168
+
+    $default  reduce using rule 13 (opt_label_declaration_part)
+
+    block                       go to state 169
+    opt_label_declaration_part  go to state 13
+    label_declaration_part      go to state 14
+    function_body               go to state 170
+
+
+state 115
+
+  127 unsigned_real: DIGIT_SEQUENCE '.' DIGIT_SEQUENCE .
+  128              | DIGIT_SEQUENCE '.' DIGIT_SEQUENCE . scale_factor
+
+    dbg_scale_factor  shift, and go to state 75
+
+    $default  reduce using rule 127 (unsigned_real)
+
+    scale_factor  go to state 171
+
+
+state 116
+
+  102 array_type: TOK_ARRAY '[' . array_type_inner ']' TOK_OF type
+
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 52
+    '+'                 shift, and go to state 53
+    '-'                 shift, and go to state 54
+    IDENTIFIER          shift, and go to state 55
+    '('                 shift, and go to state 88
+
+    constant          go to state 90
+    sign              go to state 57
+    signed_number     go to state 58
+    unsigned_number   go to state 59
+    ordinal_type      go to state 172
+    unsigned_integer  go to state 60
+    unsigned_real     go to state 61
+    subrange_type     go to state 102
+    enumerated_type   go to state 103
+    array_type_inner  go to state 173
+
+
+state 117
+
+  105 file_type: TOK_FILE TOK_OF . type
+
+    TOK_ARRAY           shift, and go to state 81
+    TOK_FILE            shift, and go to state 82
+    TOK_RECORD          shift, and go to state 83
+    TOK_SET             shift, and go to state 84
+    TOK_STRING          shift, and go to state 85
+    TOK_PACKED          shift, and go to state 86
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 52
+    '+'                 shift, and go to state 53
+    '-'                 shift, and go to state 54
+    IDENTIFIER          shift, and go to state 87
+    '('                 shift, and go to state 88
+    '^'                 shift, and go to state 89
+
+    constant               go to state 90
+    type                   go to state 174
+    sign                   go to state 57
+    signed_number          go to state 58
+    simple_type            go to state 92
+    structured_type        go to state 93
+    pointer_type           go to state 94
+    unsigned_number        go to state 59
+    ordinal_type           go to state 95
+    string_type            go to state 96
+    structured_type_inner  go to state 97
+    array_type             go to state 98
+    set_type               go to state 99
+    file_type              go to state 100
+    record_type            go to state 101
+    unsigned_integer       go to state 60
+    unsigned_real          go to state 61
+    subrange_type          go to state 102
+    enumerated_type        go to state 103
+
+
+state 118
+
+  178 variant_part: TOK_CASE . tag_field_type TOK_OF variant_part_inner
+  179             | TOK_CASE . IDENTIFIER ':' tag_field_type TOK_OF variant_part_inner
+
+    IDENTIFIER  shift, and go to state 175
+
+    tag_field_type  go to state 176
+
+
+state 119
+
+   12 identifier_list: identifier_list . ',' IDENTIFIER
+  177 fixed_element: identifier_list . ':' type
+
+    ','  shift, and go to state 29
+    ':'  shift, and go to state 177
+
+
+state 120
+
+  106 record_type: TOK_RECORD field_list . TOK_END
+
+    TOK_END  shift, and go to state 178
+
+
+state 121
+
+  135 field_list: fixed_part . opt_semi_colon
+  137           | fixed_part . ';' variant_part opt_semi_colon
+
+    ';'  shift, and go to state 179
+
+    $default  reduce using rule 149 (opt_semi_colon)
+
+    opt_semi_colon  go to state 180
+
+
+state 122
+
+  174 fixed_part: fixed_element_list . ';'
+  176 fixed_element_list: fixed_element_list . ';' fixed_element
+
+    ';'  shift, and go to state 181
+
+
+state 123
+
+  175 fixed_element_list: fixed_element .
+
+    $default  reduce using rule 175 (fixed_element_list)
+
+
+state 124
+
+  136 field_list: variant_part . opt_semi_colon
+
+    ';'  shift, and go to state 182
+
+    $default  reduce using rule 149 (opt_semi_colon)
+
+    opt_semi_colon  go to state 183
+
+
+state 125
+
+  103 set_type: TOK_SET TOK_OF . ordinal_type
+
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 52
+    '+'                 shift, and go to state 53
+    '-'                 shift, and go to state 54
+    IDENTIFIER          shift, and go to state 55
+    '('                 shift, and go to state 88
+
+    constant          go to state 90
+    sign              go to state 57
+    signed_number     go to state 58
+    unsigned_number   go to state 59
+    ordinal_type      go to state 184
+    unsigned_integer  go to state 60
+    unsigned_real     go to state 61
+    subrange_type     go to state 102
+    enumerated_type   go to state 103
+
+
+state 126
+
+   96 string_type: TOK_STRING '[' . unsigned_integer ']'
+
+    DIGIT_SEQUENCE      shift, and go to state 185
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+
+    unsigned_integer  go to state 186
+
+
+state 127
+
+   80 structured_type: TOK_PACKED structured_type_inner .
+
+    $default  reduce using rule 80 (structured_type)
+
+
+state 128
+
+   12 identifier_list: identifier_list . ',' IDENTIFIER
+  132 enumerated_type: '(' identifier_list . ')'
+
+    ','  shift, and go to state 29
+    ')'  shift, and go to state 187
+
+
+state 129
+
+   81 pointer_type: '^' IDENTIFIER .
+
+    $default  reduce using rule 81 (pointer_type)
+
+
+state 130
+
+  131 subrange_type: constant TOK_RANGE . constant
+
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 52
+    '+'                 shift, and go to state 53
+    '-'                 shift, and go to state 54
+    IDENTIFIER          shift, and go to state 55
+
+    constant          go to state 188
+    sign              go to state 57
+    signed_number     go to state 58
+    unsigned_number   go to state 59
+    unsigned_integer  go to state 60
+    unsigned_real     go to state 61
+
+
+state 131
+
+   42 type_declaration: IDENTIFIER '=' type ';' .
+
+    $default  reduce using rule 42 (type_declaration)
+
+
+state 132
+
+   43 variable_declaration: identifier_list ':' type . ';'
+
+    ';'  shift, and go to state 189
+
+
+state 133
+
+   82 formal_parameter_list: '(' . formal_parameter_list_inner ')'
+   83                      | '(' . ')'
+
+    TOK_PROGRAM   shift, and go to state 1
+    TOK_VAR       shift, and go to state 190
+    TOK_FUNCTION  shift, and go to state 67
+    ')'           shift, and go to state 191
+    IDENTIFIER    shift, and go to state 15
+
+    program_heading              go to state 192
+    identifier_list              go to state 193
+    function_heading             go to state 194
+    formal_parameter_list_inner  go to state 195
+    parameter_declaration        go to state 196
+
+
+state 134
+
+   60 function_heading: TOK_FUNCTION IDENTIFIER ':' . result_type
+
+    IDENTIFIER  shift, and go to state 197
+
+    result_type  go to state 198
+
+
+state 135
+
+   61 function_heading: TOK_FUNCTION IDENTIFIER formal_parameter_list . ':' result_type
+
+    ':'  shift, and go to state 199
+
+
+state 136
+
+   56 procedure_heading: TOK_PROCEDURE IDENTIFIER formal_parameter_list .
+
+    $default  reduce using rule 56 (procedure_heading)
+
+
+state 137
+
+  158 for_statement: TOK_FOR . IDENTIFIER TOK_ASSIGN expression TOK_TO expression TOK_DO statement
+  159              | TOK_FOR . IDENTIFIER TOK_ASSIGN expression TOK_DOWNTO expression TOK_DO statement
+
+    IDENTIFIER  shift, and go to state 200
+
+
+state 138
+
+  154 repeat_statement: TOK_REPEAT . repeat_statement_inner TOK_UNTIL expression
+
+    TOK_BEGIN       shift, and go to state 108
+    TOK_FOR         shift, and go to state 137
+    TOK_REPEAT      shift, and go to state 138
+    TOK_CASE        shift, and go to state 139
+    TOK_WHILE       shift, and go to state 140
+    TOK_GOTO        shift, and go to state 141
+    TOK_WITH        shift, and go to state 142
+    TOK_IF          shift, and go to state 143
+    DIGIT_SEQUENCE  shift, and go to state 18
+    IDENTIFIER      shift, and go to state 144
+
+    $default  reduce using rule 67 (statement)
+
+    label                   go to state 145
+    compound_statement      go to state 146
+    statement               go to state 201
+    simple_statement        go to state 149
+    structured_statement    go to state 150
+    assignment_statement    go to state 151
+    procedure_statement     go to state 152
+    goto_statement          go to state 153
+    conditional_statement   go to state 154
+    repetitive_statement    go to state 155
+    with_statement          go to state 156
+    if_statement            go to state 157
+    case_statement          go to state 158
+    repeat_statement        go to state 159
+    repeat_statement_inner  go to state 202
+    while_statement         go to state 160
+    for_statement           go to state 161
+    Identifier_or_variable  go to state 162
+
+
+state 139
+
+  146 case_statement: TOK_CASE . expression TOK_OF case_statement_inner TOK_END
+
+    TOK_NIL             shift, and go to state 203
+    TOK_NOT             shift, and go to state 204
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 205
+    '+'                 shift, and go to state 53
+    '-'                 shift, and go to state 54
+    IDENTIFIER          shift, and go to state 206
+    '('                 shift, and go to state 207
+    '['                 shift, and go to state 208
+    '@'                 shift, and go to state 209
+
+    sign                     go to state 210
+    unsigned_number          go to state 211
+    unsigned_integer         go to state 60
+    unsigned_real            go to state 61
+    Identifier_or_variable   go to state 212
+    expression               go to state 213
+    simple_expression        go to state 214
+    simple_expression_inner  go to state 215
+    term                     go to state 216
+    factor                   go to state 217
+    unsigned_constant        go to state 218
+    function_call            go to state 219
+    set_constructor          go to state 220
+
+
+state 140
+
+  157 while_statement: TOK_WHILE . expression TOK_DO statement
+
+    TOK_NIL             shift, and go to state 203
+    TOK_NOT             shift, and go to state 204
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 205
+    '+'                 shift, and go to state 53
+    '-'                 shift, and go to state 54
+    IDENTIFIER          shift, and go to state 206
+    '('                 shift, and go to state 207
+    '['                 shift, and go to state 208
+    '@'                 shift, and go to state 209
+
+    sign                     go to state 210
+    unsigned_number          go to state 211
+    unsigned_integer         go to state 60
+    unsigned_real            go to state 61
+    Identifier_or_variable   go to state 212
+    expression               go to state 221
+    simple_expression        go to state 214
+    simple_expression_inner  go to state 215
+    term                     go to state 216
+    factor                   go to state 217
+    unsigned_constant        go to state 218
+    function_call            go to state 219
+    set_constructor          go to state 220
+
+
+state 141
+
+  118 goto_statement: TOK_GOTO . label
+
+    DIGIT_SEQUENCE  shift, and go to state 18
+
+    label  go to state 222
+
+
+state 142
+
+  124 with_statement: TOK_WITH . with_statement_inner TOK_DO statement
+
+    IDENTIFIER  shift, and go to state 223
+
+    with_statement_inner       go to state 224
+    record_variable_reference  go to state 225
+    Identifier_or_variable     go to state 226
+
+
+state 143
+
+  144 if_statement: TOK_IF . expression TOK_THEN statement
+  145             | TOK_IF . expression TOK_THEN statement TOK_ELSE statement
+
+    TOK_NIL             shift, and go to state 203
+    TOK_NOT             shift, and go to state 204
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 205
+    '+'                 shift, and go to state 53
+    '-'                 shift, and go to state 54
+    IDENTIFIER          shift, and go to state 206
+    '('                 shift, and go to state 207
+    '['                 shift, and go to state 208
+    '@'                 shift, and go to state 209
+
+    sign                     go to state 210
+    unsigned_number          go to state 211
+    unsigned_integer         go to state 60
+    unsigned_real            go to state 61
+    Identifier_or_variable   go to state 212
+    expression               go to state 227
+    simple_expression        go to state 214
+    simple_expression_inner  go to state 215
+    term                     go to state 216
+    factor                   go to state 217
+    unsigned_constant        go to state 218
+    function_call            go to state 219
+    set_constructor          go to state 220
+
+
+state 144
+
+  116 procedure_statement: IDENTIFIER .
+  117                    | IDENTIFIER . actual_parameter_list
+  163 Identifier_or_variable: IDENTIFIER . variable_reference_inner
+
+    '.'  shift, and go to state 228
+    '('  shift, and go to state 229
+    '^'  shift, and go to state 230
+    '['  shift, and go to state 231
+
+    TOK_ASSIGN  reduce using rule 164 (variable_reference_inner)
+    $default    reduce using rule 116 (procedure_statement)
+
+    actual_parameter_list     go to state 232
+    variable_reference_inner  go to state 233
+    qualifiers                go to state 234
+    qualifier                 go to state 235
+    index                     go to state 236
+
+
+state 145
+
+   70 statement: label . ':'
+   71          | label . ':' simple_statement
+   72          | label . ':' structured_statement
+
+    ':'  shift, and go to state 237
+
+
+state 146
+
+   88 structured_statement: compound_statement .
+
+    $default  reduce using rule 88 (structured_statement)
+
+
+state 147
+
+   46 compound_statement: TOK_BEGIN compound_statement_inner . TOK_END
+
+    TOK_END  shift, and go to state 238
+
+
+state 148
+
+   65 compound_statement_inner: statement .
+   66                         | statement . ';' compound_statement_inner
+
+    ';'  shift, and go to state 239
+
+    $default  reduce using rule 65 (compound_statement_inner)
+
+
+state 149
+
+   68 statement: simple_statement .
+
+    $default  reduce using rule 68 (statement)
+
+
+state 150
+
+   69 statement: structured_statement .
+
+    $default  reduce using rule 69 (statement)
+
+
+state 151
+
+   85 simple_statement: assignment_statement .
+
+    $default  reduce using rule 85 (simple_statement)
+
+
+state 152
+
+   86 simple_statement: procedure_statement .
+
+    $default  reduce using rule 86 (simple_statement)
+
+
+state 153
+
+   87 simple_statement: goto_statement .
+
+    $default  reduce using rule 87 (simple_statement)
+
+
+state 154
+
+   89 structured_statement: conditional_statement .
+
+    $default  reduce using rule 89 (structured_statement)
+
+
+state 155
+
+   90 structured_statement: repetitive_statement .
+
+    $default  reduce using rule 90 (structured_statement)
+
+
+state 156
+
+   91 structured_statement: with_statement .
+
+    $default  reduce using rule 91 (structured_statement)
+
+
+state 157
+
+  119 conditional_statement: if_statement .
+
+    $default  reduce using rule 119 (conditional_statement)
+
+
+state 158
+
+  120 conditional_statement: case_statement .
+
+    $default  reduce using rule 120 (conditional_statement)
+
+
+state 159
+
+  121 repetitive_statement: repeat_statement .
+
+    $default  reduce using rule 121 (repetitive_statement)
+
+
+state 160
+
+  122 repetitive_statement: while_statement .
+
+    $default  reduce using rule 122 (repetitive_statement)
+
+
+state 161
+
+  123 repetitive_statement: for_statement .
+
+    $default  reduce using rule 123 (repetitive_statement)
+
+
+state 162
+
+  115 assignment_statement: Identifier_or_variable . TOK_ASSIGN expression
+
+    TOK_ASSIGN  shift, and go to state 240
+
+
+state 163
+
+   58 procedure_body: TOK_FORWARD .
+
+    $default  reduce using rule 58 (procedure_body)
+
+
+state 164
+
+   59 procedure_body: TOK_EXTERNAL .
+
+    $default  reduce using rule 59 (procedure_body)
+
+
+state 165
+
+   57 procedure_body: block .
+
+    $default  reduce using rule 57 (procedure_body)
+
+
+state 166
+
+   44 procedure_declaration: procedure_heading ';' procedure_body . ';'
+
+    ';'  shift, and go to state 241
+
+
+state 167
+
+   63 function_body: TOK_FORWARD .
+
+    $default  reduce using rule 63 (function_body)
+
+
+state 168
+
+   64 function_body: TOK_EXTERNAL .
+
+    $default  reduce using rule 64 (function_body)
+
+
+state 169
+
+   62 function_body: block .
+
+    $default  reduce using rule 62 (function_body)
+
+
+state 170
+
+   45 function_declaration: function_heading ';' function_body . ';'
+
+    ';'  shift, and go to state 242
+
+
+state 171
+
+  128 unsigned_real: DIGIT_SEQUENCE '.' DIGIT_SEQUENCE scale_factor .
+
+    $default  reduce using rule 128 (unsigned_real)
+
+
+state 172
+
+  133 array_type_inner: ordinal_type .
+  134                 | ordinal_type . ',' array_type_inner
+
+    ','  shift, and go to state 243
+
+    $default  reduce using rule 133 (array_type_inner)
+
+
+state 173
+
+  102 array_type: TOK_ARRAY '[' array_type_inner . ']' TOK_OF type
+
+    ']'  shift, and go to state 244
+
+
+state 174
+
+  105 file_type: TOK_FILE TOK_OF type .
+
+    $default  reduce using rule 105 (file_type)
+
+
+state 175
+
+  179 variant_part: TOK_CASE IDENTIFIER . ':' tag_field_type TOK_OF variant_part_inner
+  180 tag_field_type: IDENTIFIER .
+
+    ':'  shift, and go to state 245
+
+    $default  reduce using rule 180 (tag_field_type)
+
+
+state 176
+
+  178 variant_part: TOK_CASE tag_field_type . TOK_OF variant_part_inner
+
+    TOK_OF  shift, and go to state 246
+
+
+state 177
+
+  177 fixed_element: identifier_list ':' . type
+
+    TOK_ARRAY           shift, and go to state 81
+    TOK_FILE            shift, and go to state 82
+    TOK_RECORD          shift, and go to state 83
+    TOK_SET             shift, and go to state 84
+    TOK_STRING          shift, and go to state 85
+    TOK_PACKED          shift, and go to state 86
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 52
+    '+'                 shift, and go to state 53
+    '-'                 shift, and go to state 54
+    IDENTIFIER          shift, and go to state 87
+    '('                 shift, and go to state 88
+    '^'                 shift, and go to state 89
+
+    constant               go to state 90
+    type                   go to state 247
+    sign                   go to state 57
+    signed_number          go to state 58
+    simple_type            go to state 92
+    structured_type        go to state 93
+    pointer_type           go to state 94
+    unsigned_number        go to state 59
+    ordinal_type           go to state 95
+    string_type            go to state 96
+    structured_type_inner  go to state 97
+    array_type             go to state 98
+    set_type               go to state 99
+    file_type              go to state 100
+    record_type            go to state 101
+    unsigned_integer       go to state 60
+    unsigned_real          go to state 61
+    subrange_type          go to state 102
+    enumerated_type        go to state 103
+
+
+state 178
+
+  106 record_type: TOK_RECORD field_list TOK_END .
+
+    $default  reduce using rule 106 (record_type)
+
+
+state 179
+
+  137 field_list: fixed_part ';' . variant_part opt_semi_colon
+  150 opt_semi_colon: ';' .
+
+    TOK_CASE  shift, and go to state 118
+
+    $default  reduce using rule 150 (opt_semi_colon)
+
+    variant_part  go to state 248
+
+
+state 180
+
+  135 field_list: fixed_part opt_semi_colon .
+
+    $default  reduce using rule 135 (field_list)
+
+
+state 181
+
+  174 fixed_part: fixed_element_list ';' .
+  176 fixed_element_list: fixed_element_list ';' . fixed_element
+
+    IDENTIFIER  shift, and go to state 15
+
+    $default  reduce using rule 174 (fixed_part)
+
+    identifier_list  go to state 119
+    fixed_element    go to state 249
+
+
+state 182
+
+  150 opt_semi_colon: ';' .
+
+    $default  reduce using rule 150 (opt_semi_colon)
+
+
+state 183
+
+  136 field_list: variant_part opt_semi_colon .
+
+    $default  reduce using rule 136 (field_list)
+
+
+state 184
+
+  103 set_type: TOK_SET TOK_OF ordinal_type .
+
+    $default  reduce using rule 103 (set_type)
+
+
+state 185
+
+  125 unsigned_integer: DIGIT_SEQUENCE .
+
+    $default  reduce using rule 125 (unsigned_integer)
+
+
+state 186
+
+   96 string_type: TOK_STRING '[' unsigned_integer . ']'
+
+    ']'  shift, and go to state 250
+
+
+state 187
+
+  132 enumerated_type: '(' identifier_list ')' .
+
+    $default  reduce using rule 132 (enumerated_type)
+
+
+state 188
+
+  131 subrange_type: constant TOK_RANGE constant .
+
+    $default  reduce using rule 131 (subrange_type)
+
+
+state 189
+
+   43 variable_declaration: identifier_list ':' type ';' .
+
+    $default  reduce using rule 43 (variable_declaration)
+
+
+state 190
+
+  114 parameter_declaration: TOK_VAR . identifier_list ':' IDENTIFIER
+
+    IDENTIFIER  shift, and go to state 15
+
+    identifier_list  go to state 251
+
+
+state 191
+
+   83 formal_parameter_list: '(' ')' .
+
+    $default  reduce using rule 83 (formal_parameter_list)
+
+
+state 192
+
+  108 formal_parameter_list_inner: program_heading .
+  111                            | program_heading . ';' formal_parameter_list_inner
+
+    ';'  shift, and go to state 252
+
+    $default  reduce using rule 108 (formal_parameter_list_inner)
+
+
+state 193
+
+   12 identifier_list: identifier_list . ',' IDENTIFIER
+  113 parameter_declaration: identifier_list . ':' IDENTIFIER
+
+    ','  shift, and go to state 29
+    ':'  shift, and go to state 253
+
+
+state 194
+
+  109 formal_parameter_list_inner: function_heading .
+  112                            | function_heading . ';' formal_parameter_list_inner
+
+    ';'  shift, and go to state 254
+
+    $default  reduce using rule 109 (formal_parameter_list_inner)
+
+
+state 195
+
+   82 formal_parameter_list: '(' formal_parameter_list_inner . ')'
+
+    ')'  shift, and go to state 255
+
+
+state 196
+
+  107 formal_parameter_list_inner: parameter_declaration .
+  110                            | parameter_declaration . ';' formal_parameter_list_inner
+
+    ';'  shift, and go to state 256
+
+    $default  reduce using rule 107 (formal_parameter_list_inner)
+
+
+state 197
+
+   84 result_type: IDENTIFIER .
+
+    $default  reduce using rule 84 (result_type)
+
+
+state 198
+
+   60 function_heading: TOK_FUNCTION IDENTIFIER ':' result_type .
+
+    $default  reduce using rule 60 (function_heading)
+
+
+state 199
+
+   61 function_heading: TOK_FUNCTION IDENTIFIER formal_parameter_list ':' . result_type
+
+    IDENTIFIER  shift, and go to state 197
+
+    result_type  go to state 257
+
+
+state 200
+
+  158 for_statement: TOK_FOR IDENTIFIER . TOK_ASSIGN expression TOK_TO expression TOK_DO statement
+  159              | TOK_FOR IDENTIFIER . TOK_ASSIGN expression TOK_DOWNTO expression TOK_DO statement
+
+    TOK_ASSIGN  shift, and go to state 258
+
+
+state 201
+
+  155 repeat_statement_inner: statement .
+  156                       | statement . ';' repeat_statement_inner
+
+    ';'  shift, and go to state 259
+
+    $default  reduce using rule 155 (repeat_statement_inner)
+
+
+state 202
+
+  154 repeat_statement: TOK_REPEAT repeat_statement_inner . TOK_UNTIL expression
+
+    TOK_UNTIL  shift, and go to state 260
+
+
+state 203
+
+  215 unsigned_constant: TOK_NIL .
+
+    $default  reduce using rule 215 (unsigned_constant)
+
+
+state 204
+
+  214 factor: TOK_NOT . factor
+
+    TOK_NIL             shift, and go to state 203
+    TOK_NOT             shift, and go to state 204
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 205
+    IDENTIFIER          shift, and go to state 206
+    '('                 shift, and go to state 207
+    '['                 shift, and go to state 208
+    '@'                 shift, and go to state 209
+
+    unsigned_number         go to state 211
+    unsigned_integer        go to state 60
+    unsigned_real           go to state 61
+    Identifier_or_variable  go to state 212
+    factor                  go to state 261
+    unsigned_constant       go to state 218
+    function_call           go to state 219
+    set_constructor         go to state 220
+
+
+state 205
+
+  217 unsigned_constant: STRING .
+
+    $default  reduce using rule 217 (unsigned_constant)
+
+
+state 206
+
+  163 Identifier_or_variable: IDENTIFIER . variable_reference_inner
+  218 function_call: IDENTIFIER . actual_parameter_list
+
+    '.'  shift, and go to state 228
+    '('  shift, and go to state 229
+    '^'  shift, and go to state 230
+    '['  shift, and go to state 231
+
+    $default  reduce using rule 164 (variable_reference_inner)
+
+    actual_parameter_list     go to state 262
+    variable_reference_inner  go to state 233
+    qualifiers                go to state 234
+    qualifier                 go to state 235
+    index                     go to state 236
+
+
+state 207
+
+  213 factor: '(' . expression ')'
+
+    TOK_NIL             shift, and go to state 203
+    TOK_NOT             shift, and go to state 204
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 205
+    '+'                 shift, and go to state 53
+    '-'                 shift, and go to state 54
+    IDENTIFIER          shift, and go to state 206
+    '('                 shift, and go to state 207
+    '['                 shift, and go to state 208
+    '@'                 shift, and go to state 209
+
+    sign                     go to state 210
+    unsigned_number          go to state 211
+    unsigned_integer         go to state 60
+    unsigned_real            go to state 61
+    Identifier_or_variable   go to state 212
+    expression               go to state 263
+    simple_expression        go to state 214
+    simple_expression_inner  go to state 215
+    term                     go to state 216
+    factor                   go to state 217
+    unsigned_constant        go to state 218
+    function_call            go to state 219
+    set_constructor          go to state 220
+
+
+state 208
+
+  219 set_constructor: '[' . set_constructor_inner ']'
+  220                | '[' . ']'
+
+    TOK_NIL             shift, and go to state 203
+    TOK_NOT             shift, and go to state 204
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 205
+    '+'                 shift, and go to state 53
+    '-'                 shift, and go to state 54
+    IDENTIFIER          shift, and go to state 206
+    '('                 shift, and go to state 207
+    '['                 shift, and go to state 208
+    ']'                 shift, and go to state 264
+    '@'                 shift, and go to state 209
+
+    sign                     go to state 210
+    unsigned_number          go to state 211
+    unsigned_integer         go to state 60
+    unsigned_real            go to state 61
+    Identifier_or_variable   go to state 212
+    expression               go to state 265
+    simple_expression        go to state 214
+    simple_expression_inner  go to state 215
+    term                     go to state 216
+    factor                   go to state 217
+    unsigned_constant        go to state 218
+    function_call            go to state 219
+    set_constructor          go to state 220
+    set_constructor_inner    go to state 266
+    member_group             go to state 267
+
+
+state 209
+
+  209 factor: '@' . Identifier_or_variable
+
+    IDENTIFIER  shift, and go to state 223
+
+    Identifier_or_variable  go to state 268
+
+
+state 210
+
+  189 simple_expression: sign . simple_expression_inner
+
+    TOK_NIL             shift, and go to state 203
+    TOK_NOT             shift, and go to state 204
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 205
+    IDENTIFIER          shift, and go to state 206
+    '('                 shift, and go to state 207
+    '['                 shift, and go to state 208
+    '@'                 shift, and go to state 209
+
+    unsigned_number          go to state 211
+    unsigned_integer         go to state 60
+    unsigned_real            go to state 61
+    Identifier_or_variable   go to state 212
+    simple_expression_inner  go to state 269
+    term                     go to state 216
+    factor                   go to state 217
+    unsigned_constant        go to state 218
+    function_call            go to state 219
+    set_constructor          go to state 220
+
+
+state 211
+
+  216 unsigned_constant: unsigned_number .
+
+    $default  reduce using rule 216 (unsigned_constant)
+
+
+state 212
+
+  208 factor: Identifier_or_variable .
+
+    $default  reduce using rule 208 (factor)
+
+
+state 213
+
+  146 case_statement: TOK_CASE expression . TOK_OF case_statement_inner TOK_END
+
+    TOK_OF  shift, and go to state 270
+
+
+state 214
+
+  187 expression: simple_expression .
+  188           | simple_expression . arit simple_expression
+
+    TOK_IN  shift, and go to state 271
+    TOK_NE  shift, and go to state 272
+    TOK_LE  shift, and go to state 273
+    TOK_GE  shift, and go to state 274
+    '='     shift, and go to state 275
+    '<'     shift, and go to state 276
+    '>'     shift, and go to state 277
+
+    $default  reduce using rule 187 (expression)
+
+    arit  go to state 278
+
+
+state 215
+
+  190 simple_expression: simple_expression_inner .
+
+    $default  reduce using rule 190 (simple_expression)
+
+
+state 216
+
+  198 simple_expression_inner: term .
+  199                        | term . '+' simple_expression_inner
+  200                        | term . '-' simple_expression_inner
+  201                        | term . TOK_OR simple_expression_inner
+
+    TOK_OR  shift, and go to state 279
+    '+'     shift, and go to state 280
+    '-'     shift, and go to state 281
+
+    $default  reduce using rule 198 (simple_expression_inner)
+
+
+state 217
+
+  202 term: factor .
+  203     | factor . '*' term
+  204     | factor . '/' term
+  205     | factor . TOK_DIV term
+  206     | factor . TOK_MOD term
+  207     | factor . TOK_AND term
+
+    TOK_AND  shift, and go to state 282
+    TOK_MOD  shift, and go to state 283
+    TOK_DIV  shift, and go to state 284
+    '*'      shift, and go to state 285
+    '/'      shift, and go to state 286
+
+    $default  reduce using rule 202 (term)
+
+
+state 218
+
+  210 factor: unsigned_constant .
+
+    $default  reduce using rule 210 (factor)
+
+
+state 219
+
+  211 factor: function_call .
+
+    $default  reduce using rule 211 (factor)
+
+
+state 220
+
+  212 factor: set_constructor .
+
+    $default  reduce using rule 212 (factor)
+
+
+state 221
+
+  157 while_statement: TOK_WHILE expression . TOK_DO statement
+
+    TOK_DO  shift, and go to state 287
+
+
+state 222
+
+  118 goto_statement: TOK_GOTO label .
+
+    $default  reduce using rule 118 (goto_statement)
+
+
+state 223
+
+  163 Identifier_or_variable: IDENTIFIER . variable_reference_inner
+
+    '.'  shift, and go to state 228
+    '^'  shift, and go to state 230
+    '['  shift, and go to state 231
+
+    $default  reduce using rule 164 (variable_reference_inner)
+
+    variable_reference_inner  go to state 233
+    qualifiers                go to state 234
+    qualifier                 go to state 235
+    index                     go to state 236
+
+
+state 224
+
+  124 with_statement: TOK_WITH with_statement_inner . TOK_DO statement
+
+    TOK_DO  shift, and go to state 288
+
+
+state 225
+
+  160 with_statement_inner: record_variable_reference .
+  161                     | record_variable_reference . ',' with_statement_inner
+
+    ','  shift, and go to state 289
+
+    $default  reduce using rule 160 (with_statement_inner)
+
+
+state 226
+
+  162 record_variable_reference: Identifier_or_variable .
+
+    $default  reduce using rule 162 (record_variable_reference)
+
+
+state 227
+
+  144 if_statement: TOK_IF expression . TOK_THEN statement
+  145             | TOK_IF expression . TOK_THEN statement TOK_ELSE statement
+
+    TOK_THEN  shift, and go to state 290
+
+
+state 228
+
+  169 qualifier: '.' . IDENTIFIER
+
+    IDENTIFIER  shift, and go to state 291
+
+
+state 229
+
+  138 actual_parameter_list: '(' . actual_parameters ')'
+  139                      | '(' . ')'
+
+    TOK_NIL             shift, and go to state 203
+    TOK_NOT             shift, and go to state 204
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 205
+    '+'                 shift, and go to state 53
+    '-'                 shift, and go to state 54
+    ')'                 shift, and go to state 292
+    IDENTIFIER          shift, and go to state 206
+    '('                 shift, and go to state 207
+    '['                 shift, and go to state 208
+    '@'                 shift, and go to state 209
+
+    sign                     go to state 210
+    unsigned_number          go to state 211
+    unsigned_integer         go to state 60
+    unsigned_real            go to state 61
+    actual_parameters        go to state 293
+    Identifier_or_variable   go to state 294
+    expression               go to state 295
+    simple_expression        go to state 214
+    simple_expression_inner  go to state 215
+    term                     go to state 216
+    factor                   go to state 217
+    unsigned_constant        go to state 218
+    function_call            go to state 219
+    set_constructor          go to state 220
+
+
+state 230
+
+  170 qualifier: '^' .
+
+    $default  reduce using rule 170 (qualifier)
+
+
+state 231
+
+  171 index: '[' . index_inner ']'
+
+    TOK_NIL             shift, and go to state 203
+    TOK_NOT             shift, and go to state 204
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 205
+    '+'                 shift, and go to state 53
+    '-'                 shift, and go to state 54
+    IDENTIFIER          shift, and go to state 206
+    '('                 shift, and go to state 207
+    '['                 shift, and go to state 208
+    '@'                 shift, and go to state 209
+
+    sign                     go to state 210
+    unsigned_number          go to state 211
+    unsigned_integer         go to state 60
+    unsigned_real            go to state 61
+    Identifier_or_variable   go to state 212
+    index_inner              go to state 296
+    expression               go to state 297
+    simple_expression        go to state 214
+    simple_expression_inner  go to state 215
+    term                     go to state 216
+    factor                   go to state 217
+    unsigned_constant        go to state 218
+    function_call            go to state 219
+    set_constructor          go to state 220
+
+
+state 232
+
+  117 procedure_statement: IDENTIFIER actual_parameter_list .
+
+    $default  reduce using rule 117 (procedure_statement)
+
+
+state 233
+
+  163 Identifier_or_variable: IDENTIFIER variable_reference_inner .
+
+    $default  reduce using rule 163 (Identifier_or_variable)
+
+
+state 234
+
+  165 variable_reference_inner: qualifiers .
+
+    $default  reduce using rule 165 (variable_reference_inner)
+
+
+state 235
+
+  166 qualifiers: qualifier .
+  167           | qualifier . qualifiers
+
+    '.'  shift, and go to state 228
+    '^'  shift, and go to state 230
+    '['  shift, and go to state 231
+
+    $default  reduce using rule 166 (qualifiers)
+
+    qualifiers  go to state 298
+    qualifier   go to state 235
+    index       go to state 236
+
+
+state 236
+
+  168 qualifier: index .
+
+    $default  reduce using rule 168 (qualifier)
+
+
+state 237
+
+   70 statement: label ':' .
+   71          | label ':' . simple_statement
+   72          | label ':' . structured_statement
+
+    TOK_BEGIN   shift, and go to state 108
+    TOK_FOR     shift, and go to state 137
+    TOK_REPEAT  shift, and go to state 138
+    TOK_CASE    shift, and go to state 139
+    TOK_WHILE   shift, and go to state 140
+    TOK_GOTO    shift, and go to state 141
+    TOK_WITH    shift, and go to state 142
+    TOK_IF      shift, and go to state 143
+    IDENTIFIER  shift, and go to state 144
+
+    $default  reduce using rule 70 (statement)
+
+    compound_statement      go to state 146
+    simple_statement        go to state 299
+    structured_statement    go to state 300
+    assignment_statement    go to state 151
+    procedure_statement     go to state 152
+    goto_statement          go to state 153
+    conditional_statement   go to state 154
+    repetitive_statement    go to state 155
+    with_statement          go to state 156
+    if_statement            go to state 157
+    case_statement          go to state 158
+    repeat_statement        go to state 159
+    while_statement         go to state 160
+    for_statement           go to state 161
+    Identifier_or_variable  go to state 162
+
+
+state 238
+
+   46 compound_statement: TOK_BEGIN compound_statement_inner TOK_END .
+
+    $default  reduce using rule 46 (compound_statement)
+
+
+state 239
+
+   66 compound_statement_inner: statement ';' . compound_statement_inner
+
+    TOK_BEGIN       shift, and go to state 108
+    TOK_FOR         shift, and go to state 137
+    TOK_REPEAT      shift, and go to state 138
+    TOK_CASE        shift, and go to state 139
+    TOK_WHILE       shift, and go to state 140
+    TOK_GOTO        shift, and go to state 141
+    TOK_WITH        shift, and go to state 142
+    TOK_IF          shift, and go to state 143
+    DIGIT_SEQUENCE  shift, and go to state 18
+    IDENTIFIER      shift, and go to state 144
+
+    $default  reduce using rule 67 (statement)
+
+    label                     go to state 145
+    compound_statement        go to state 146
+    compound_statement_inner  go to state 301
+    statement                 go to state 148
+    simple_statement          go to state 149
+    structured_statement      go to state 150
+    assignment_statement      go to state 151
+    procedure_statement       go to state 152
+    goto_statement            go to state 153
+    conditional_statement     go to state 154
+    repetitive_statement      go to state 155
+    with_statement            go to state 156
+    if_statement              go to state 157
+    case_statement            go to state 158
+    repeat_statement          go to state 159
+    while_statement           go to state 160
+    for_statement             go to state 161
+    Identifier_or_variable    go to state 162
+
+
+state 240
+
+  115 assignment_statement: Identifier_or_variable TOK_ASSIGN . expression
+
+    TOK_NIL             shift, and go to state 203
+    TOK_NOT             shift, and go to state 204
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 205
+    '+'                 shift, and go to state 53
+    '-'                 shift, and go to state 54
+    IDENTIFIER          shift, and go to state 206
+    '('                 shift, and go to state 207
+    '['                 shift, and go to state 208
+    '@'                 shift, and go to state 209
+
+    sign                     go to state 210
+    unsigned_number          go to state 211
+    unsigned_integer         go to state 60
+    unsigned_real            go to state 61
+    Identifier_or_variable   go to state 212
+    expression               go to state 302
+    simple_expression        go to state 214
+    simple_expression_inner  go to state 215
+    term                     go to state 216
+    factor                   go to state 217
+    unsigned_constant        go to state 218
+    function_call            go to state 219
+    set_constructor          go to state 220
+
+
+state 241
+
+   44 procedure_declaration: procedure_heading ';' procedure_body ';' .
+
+    $default  reduce using rule 44 (procedure_declaration)
+
+
+state 242
+
+   45 function_declaration: function_heading ';' function_body ';' .
+
+    $default  reduce using rule 45 (function_declaration)
+
+
+state 243
+
+  134 array_type_inner: ordinal_type ',' . array_type_inner
+
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 52
+    '+'                 shift, and go to state 53
+    '-'                 shift, and go to state 54
+    IDENTIFIER          shift, and go to state 55
+    '('                 shift, and go to state 88
+
+    constant          go to state 90
+    sign              go to state 57
+    signed_number     go to state 58
+    unsigned_number   go to state 59
+    ordinal_type      go to state 172
+    unsigned_integer  go to state 60
+    unsigned_real     go to state 61
+    subrange_type     go to state 102
+    enumerated_type   go to state 103
+    array_type_inner  go to state 303
+
+
+state 244
+
+  102 array_type: TOK_ARRAY '[' array_type_inner ']' . TOK_OF type
+
+    TOK_OF  shift, and go to state 304
+
+
+state 245
+
+  179 variant_part: TOK_CASE IDENTIFIER ':' . tag_field_type TOK_OF variant_part_inner
+
+    IDENTIFIER  shift, and go to state 305
+
+    tag_field_type  go to state 306
+
+
+state 246
+
+  178 variant_part: TOK_CASE tag_field_type TOK_OF . variant_part_inner
+
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 52
+    '+'                 shift, and go to state 53
+    '-'                 shift, and go to state 54
+    IDENTIFIER          shift, and go to state 55
+
+    constant            go to state 307
+    sign                go to state 57
+    signed_number       go to state 58
+    unsigned_number     go to state 59
+    unsigned_integer    go to state 60
+    unsigned_real       go to state 61
+    variant_part_inner  go to state 308
+    variant             go to state 309
+    variant_inner       go to state 310
+
+
+state 247
+
+  177 fixed_element: identifier_list ':' type .
+
+    $default  reduce using rule 177 (fixed_element)
+
+
+state 248
+
+  137 field_list: fixed_part ';' variant_part . opt_semi_colon
+
+    ';'  shift, and go to state 182
+
+    $default  reduce using rule 149 (opt_semi_colon)
+
+    opt_semi_colon  go to state 311
+
+
+state 249
+
+  176 fixed_element_list: fixed_element_list ';' fixed_element .
+
+    $default  reduce using rule 176 (fixed_element_list)
+
+
+state 250
+
+   96 string_type: TOK_STRING '[' unsigned_integer ']' .
+
+    $default  reduce using rule 96 (string_type)
+
+
+state 251
+
+   12 identifier_list: identifier_list . ',' IDENTIFIER
+  114 parameter_declaration: TOK_VAR identifier_list . ':' IDENTIFIER
+
+    ','  shift, and go to state 29
+    ':'  shift, and go to state 312
+
+
+state 252
+
+  111 formal_parameter_list_inner: program_heading ';' . formal_parameter_list_inner
+
+    TOK_PROGRAM   shift, and go to state 1
+    TOK_VAR       shift, and go to state 190
+    TOK_FUNCTION  shift, and go to state 67
+    IDENTIFIER    shift, and go to state 15
+
+    program_heading              go to state 192
+    identifier_list              go to state 193
+    function_heading             go to state 194
+    formal_parameter_list_inner  go to state 313
+    parameter_declaration        go to state 196
+
+
+state 253
+
+  113 parameter_declaration: identifier_list ':' . IDENTIFIER
+
+    IDENTIFIER  shift, and go to state 314
+
+
+state 254
+
+  112 formal_parameter_list_inner: function_heading ';' . formal_parameter_list_inner
+
+    TOK_PROGRAM   shift, and go to state 1
+    TOK_VAR       shift, and go to state 190
+    TOK_FUNCTION  shift, and go to state 67
+    IDENTIFIER    shift, and go to state 15
+
+    program_heading              go to state 192
+    identifier_list              go to state 193
+    function_heading             go to state 194
+    formal_parameter_list_inner  go to state 315
+    parameter_declaration        go to state 196
+
+
+state 255
+
+   82 formal_parameter_list: '(' formal_parameter_list_inner ')' .
+
+    $default  reduce using rule 82 (formal_parameter_list)
+
+
+state 256
+
+  110 formal_parameter_list_inner: parameter_declaration ';' . formal_parameter_list_inner
+
+    TOK_PROGRAM   shift, and go to state 1
+    TOK_VAR       shift, and go to state 190
+    TOK_FUNCTION  shift, and go to state 67
+    IDENTIFIER    shift, and go to state 15
+
+    program_heading              go to state 192
+    identifier_list              go to state 193
+    function_heading             go to state 194
+    formal_parameter_list_inner  go to state 316
+    parameter_declaration        go to state 196
+
+
+state 257
+
+   61 function_heading: TOK_FUNCTION IDENTIFIER formal_parameter_list ':' result_type .
+
+    $default  reduce using rule 61 (function_heading)
+
+
+state 258
+
+  158 for_statement: TOK_FOR IDENTIFIER TOK_ASSIGN . expression TOK_TO expression TOK_DO statement
+  159              | TOK_FOR IDENTIFIER TOK_ASSIGN . expression TOK_DOWNTO expression TOK_DO statement
+
+    TOK_NIL             shift, and go to state 203
+    TOK_NOT             shift, and go to state 204
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 205
+    '+'                 shift, and go to state 53
+    '-'                 shift, and go to state 54
+    IDENTIFIER          shift, and go to state 206
+    '('                 shift, and go to state 207
+    '['                 shift, and go to state 208
+    '@'                 shift, and go to state 209
+
+    sign                     go to state 210
+    unsigned_number          go to state 211
+    unsigned_integer         go to state 60
+    unsigned_real            go to state 61
+    Identifier_or_variable   go to state 212
+    expression               go to state 317
+    simple_expression        go to state 214
+    simple_expression_inner  go to state 215
+    term                     go to state 216
+    factor                   go to state 217
+    unsigned_constant        go to state 218
+    function_call            go to state 219
+    set_constructor          go to state 220
+
+
+state 259
+
+  156 repeat_statement_inner: statement ';' . repeat_statement_inner
+
+    TOK_BEGIN       shift, and go to state 108
+    TOK_FOR         shift, and go to state 137
+    TOK_REPEAT      shift, and go to state 138
+    TOK_CASE        shift, and go to state 139
+    TOK_WHILE       shift, and go to state 140
+    TOK_GOTO        shift, and go to state 141
+    TOK_WITH        shift, and go to state 142
+    TOK_IF          shift, and go to state 143
+    DIGIT_SEQUENCE  shift, and go to state 18
+    IDENTIFIER      shift, and go to state 144
+
+    $default  reduce using rule 67 (statement)
+
+    label                   go to state 145
+    compound_statement      go to state 146
+    statement               go to state 201
+    simple_statement        go to state 149
+    structured_statement    go to state 150
+    assignment_statement    go to state 151
+    procedure_statement     go to state 152
+    goto_statement          go to state 153
+    conditional_statement   go to state 154
+    repetitive_statement    go to state 155
+    with_statement          go to state 156
+    if_statement            go to state 157
+    case_statement          go to state 158
+    repeat_statement        go to state 159
+    repeat_statement_inner  go to state 318
+    while_statement         go to state 160
+    for_statement           go to state 161
+    Identifier_or_variable  go to state 162
+
+
+state 260
+
+  154 repeat_statement: TOK_REPEAT repeat_statement_inner TOK_UNTIL . expression
+
+    TOK_NIL             shift, and go to state 203
+    TOK_NOT             shift, and go to state 204
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 205
+    '+'                 shift, and go to state 53
+    '-'                 shift, and go to state 54
+    IDENTIFIER          shift, and go to state 206
+    '('                 shift, and go to state 207
+    '['                 shift, and go to state 208
+    '@'                 shift, and go to state 209
+
+    sign                     go to state 210
+    unsigned_number          go to state 211
+    unsigned_integer         go to state 60
+    unsigned_real            go to state 61
+    Identifier_or_variable   go to state 212
+    expression               go to state 319
+    simple_expression        go to state 214
+    simple_expression_inner  go to state 215
+    term                     go to state 216
+    factor                   go to state 217
+    unsigned_constant        go to state 218
+    function_call            go to state 219
+    set_constructor          go to state 220
+
+
+state 261
+
+  214 factor: TOK_NOT factor .
+
+    $default  reduce using rule 214 (factor)
+
+
+state 262
+
+  218 function_call: IDENTIFIER actual_parameter_list .
+
+    $default  reduce using rule 218 (function_call)
+
+
+state 263
+
+  213 factor: '(' expression . ')'
+
+    ')'  shift, and go to state 320
+
+
+state 264
+
+  220 set_constructor: '[' ']' .
+
+    $default  reduce using rule 220 (set_constructor)
+
+
+state 265
+
+  223 member_group: expression .
+  224             | expression . TOK_RANGE expression
+
+    TOK_RANGE  shift, and go to state 321
+
+    $default  reduce using rule 223 (member_group)
+
+
+state 266
+
+  219 set_constructor: '[' set_constructor_inner . ']'
+
+    ']'  shift, and go to state 322
+
+
+state 267
+
+  221 set_constructor_inner: member_group .
+  222                      | member_group . ',' set_constructor_inner
+
+    ','  shift, and go to state 323
+
+    $default  reduce using rule 221 (set_constructor_inner)
+
+
+state 268
+
+  209 factor: '@' Identifier_or_variable .
+
+    $default  reduce using rule 209 (factor)
+
+
+state 269
+
+  189 simple_expression: sign simple_expression_inner .
+
+    $default  reduce using rule 189 (simple_expression)
+
+
+state 270
+
+  146 case_statement: TOK_CASE expression TOK_OF . case_statement_inner TOK_END
+
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 52
+    '+'                 shift, and go to state 53
+    '-'                 shift, and go to state 54
+    IDENTIFIER          shift, and go to state 55
+
+    constant              go to state 324
+    sign                  go to state 57
+    signed_number         go to state 58
+    unsigned_number       go to state 59
+    unsigned_integer      go to state 60
+    unsigned_real         go to state 61
+    case_statement_inner  go to state 325
+    case                  go to state 326
+    case_inner            go to state 327
+
+
+state 271
+
+  194 arit: TOK_IN .
+
+    $default  reduce using rule 194 (arit)
+
+
+state 272
+
+  197 arit: TOK_NE .
+
+    $default  reduce using rule 197 (arit)
+
+
+state 273
+
+  195 arit: TOK_LE .
+
+    $default  reduce using rule 195 (arit)
+
+
+state 274
+
+  196 arit: TOK_GE .
+
+    $default  reduce using rule 196 (arit)
+
+
+state 275
+
+  191 arit: '=' .
+
+    $default  reduce using rule 191 (arit)
+
+
+state 276
+
+  192 arit: '<' .
+
+    $default  reduce using rule 192 (arit)
+
+
+state 277
+
+  193 arit: '>' .
+
+    $default  reduce using rule 193 (arit)
+
+
+state 278
+
+  188 expression: simple_expression arit . simple_expression
+
+    TOK_NIL             shift, and go to state 203
+    TOK_NOT             shift, and go to state 204
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 205
+    '+'                 shift, and go to state 53
+    '-'                 shift, and go to state 54
+    IDENTIFIER          shift, and go to state 206
+    '('                 shift, and go to state 207
+    '['                 shift, and go to state 208
+    '@'                 shift, and go to state 209
+
+    sign                     go to state 210
+    unsigned_number          go to state 211
+    unsigned_integer         go to state 60
+    unsigned_real            go to state 61
+    Identifier_or_variable   go to state 212
+    simple_expression        go to state 328
+    simple_expression_inner  go to state 215
+    term                     go to state 216
+    factor                   go to state 217
+    unsigned_constant        go to state 218
+    function_call            go to state 219
+    set_constructor          go to state 220
+
+
+state 279
+
+  201 simple_expression_inner: term TOK_OR . simple_expression_inner
+
+    TOK_NIL             shift, and go to state 203
+    TOK_NOT             shift, and go to state 204
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 205
+    IDENTIFIER          shift, and go to state 206
+    '('                 shift, and go to state 207
+    '['                 shift, and go to state 208
+    '@'                 shift, and go to state 209
+
+    unsigned_number          go to state 211
+    unsigned_integer         go to state 60
+    unsigned_real            go to state 61
+    Identifier_or_variable   go to state 212
+    simple_expression_inner  go to state 329
+    term                     go to state 216
+    factor                   go to state 217
+    unsigned_constant        go to state 218
+    function_call            go to state 219
+    set_constructor          go to state 220
+
+
+state 280
+
+  199 simple_expression_inner: term '+' . simple_expression_inner
+
+    TOK_NIL             shift, and go to state 203
+    TOK_NOT             shift, and go to state 204
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 205
+    IDENTIFIER          shift, and go to state 206
+    '('                 shift, and go to state 207
+    '['                 shift, and go to state 208
+    '@'                 shift, and go to state 209
+
+    unsigned_number          go to state 211
+    unsigned_integer         go to state 60
+    unsigned_real            go to state 61
+    Identifier_or_variable   go to state 212
+    simple_expression_inner  go to state 330
+    term                     go to state 216
+    factor                   go to state 217
+    unsigned_constant        go to state 218
+    function_call            go to state 219
+    set_constructor          go to state 220
+
+
+state 281
+
+  200 simple_expression_inner: term '-' . simple_expression_inner
+
+    TOK_NIL             shift, and go to state 203
+    TOK_NOT             shift, and go to state 204
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 205
+    IDENTIFIER          shift, and go to state 206
+    '('                 shift, and go to state 207
+    '['                 shift, and go to state 208
+    '@'                 shift, and go to state 209
+
+    unsigned_number          go to state 211
+    unsigned_integer         go to state 60
+    unsigned_real            go to state 61
+    Identifier_or_variable   go to state 212
+    simple_expression_inner  go to state 331
+    term                     go to state 216
+    factor                   go to state 217
+    unsigned_constant        go to state 218
+    function_call            go to state 219
+    set_constructor          go to state 220
+
+
+state 282
+
+  207 term: factor TOK_AND . term
+
+    TOK_NIL             shift, and go to state 203
+    TOK_NOT             shift, and go to state 204
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 205
+    IDENTIFIER          shift, and go to state 206
+    '('                 shift, and go to state 207
+    '['                 shift, and go to state 208
+    '@'                 shift, and go to state 209
+
+    unsigned_number         go to state 211
+    unsigned_integer        go to state 60
+    unsigned_real           go to state 61
+    Identifier_or_variable  go to state 212
+    term                    go to state 332
+    factor                  go to state 217
+    unsigned_constant       go to state 218
+    function_call           go to state 219
+    set_constructor         go to state 220
+
+
+state 283
+
+  206 term: factor TOK_MOD . term
+
+    TOK_NIL             shift, and go to state 203
+    TOK_NOT             shift, and go to state 204
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 205
+    IDENTIFIER          shift, and go to state 206
+    '('                 shift, and go to state 207
+    '['                 shift, and go to state 208
+    '@'                 shift, and go to state 209
+
+    unsigned_number         go to state 211
+    unsigned_integer        go to state 60
+    unsigned_real           go to state 61
+    Identifier_or_variable  go to state 212
+    term                    go to state 333
+    factor                  go to state 217
+    unsigned_constant       go to state 218
+    function_call           go to state 219
+    set_constructor         go to state 220
+
+
+state 284
+
+  205 term: factor TOK_DIV . term
+
+    TOK_NIL             shift, and go to state 203
+    TOK_NOT             shift, and go to state 204
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 205
+    IDENTIFIER          shift, and go to state 206
+    '('                 shift, and go to state 207
+    '['                 shift, and go to state 208
+    '@'                 shift, and go to state 209
+
+    unsigned_number         go to state 211
+    unsigned_integer        go to state 60
+    unsigned_real           go to state 61
+    Identifier_or_variable  go to state 212
+    term                    go to state 334
+    factor                  go to state 217
+    unsigned_constant       go to state 218
+    function_call           go to state 219
+    set_constructor         go to state 220
+
+
+state 285
+
+  203 term: factor '*' . term
+
+    TOK_NIL             shift, and go to state 203
+    TOK_NOT             shift, and go to state 204
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 205
+    IDENTIFIER          shift, and go to state 206
+    '('                 shift, and go to state 207
+    '['                 shift, and go to state 208
+    '@'                 shift, and go to state 209
+
+    unsigned_number         go to state 211
+    unsigned_integer        go to state 60
+    unsigned_real           go to state 61
+    Identifier_or_variable  go to state 212
+    term                    go to state 335
+    factor                  go to state 217
+    unsigned_constant       go to state 218
+    function_call           go to state 219
+    set_constructor         go to state 220
+
+
+state 286
+
+  204 term: factor '/' . term
+
+    TOK_NIL             shift, and go to state 203
+    TOK_NOT             shift, and go to state 204
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 205
+    IDENTIFIER          shift, and go to state 206
+    '('                 shift, and go to state 207
+    '['                 shift, and go to state 208
+    '@'                 shift, and go to state 209
+
+    unsigned_number         go to state 211
+    unsigned_integer        go to state 60
+    unsigned_real           go to state 61
+    Identifier_or_variable  go to state 212
+    term                    go to state 336
+    factor                  go to state 217
+    unsigned_constant       go to state 218
+    function_call           go to state 219
+    set_constructor         go to state 220
+
+
+state 287
+
+  157 while_statement: TOK_WHILE expression TOK_DO . statement
+
+    TOK_BEGIN       shift, and go to state 108
+    TOK_FOR         shift, and go to state 137
+    TOK_REPEAT      shift, and go to state 138
+    TOK_CASE        shift, and go to state 139
+    TOK_WHILE       shift, and go to state 140
+    TOK_GOTO        shift, and go to state 141
+    TOK_WITH        shift, and go to state 142
+    TOK_IF          shift, and go to state 143
+    DIGIT_SEQUENCE  shift, and go to state 18
+    IDENTIFIER      shift, and go to state 144
+
+    $default  reduce using rule 67 (statement)
+
+    label                   go to state 145
+    compound_statement      go to state 146
+    statement               go to state 337
+    simple_statement        go to state 149
+    structured_statement    go to state 150
+    assignment_statement    go to state 151
+    procedure_statement     go to state 152
+    goto_statement          go to state 153
+    conditional_statement   go to state 154
+    repetitive_statement    go to state 155
+    with_statement          go to state 156
+    if_statement            go to state 157
+    case_statement          go to state 158
+    repeat_statement        go to state 159
+    while_statement         go to state 160
+    for_statement           go to state 161
+    Identifier_or_variable  go to state 162
+
+
+state 288
+
+  124 with_statement: TOK_WITH with_statement_inner TOK_DO . statement
+
+    TOK_BEGIN       shift, and go to state 108
+    TOK_FOR         shift, and go to state 137
+    TOK_REPEAT      shift, and go to state 138
+    TOK_CASE        shift, and go to state 139
+    TOK_WHILE       shift, and go to state 140
+    TOK_GOTO        shift, and go to state 141
+    TOK_WITH        shift, and go to state 142
+    TOK_IF          shift, and go to state 143
+    DIGIT_SEQUENCE  shift, and go to state 18
+    IDENTIFIER      shift, and go to state 144
+
+    $default  reduce using rule 67 (statement)
+
+    label                   go to state 145
+    compound_statement      go to state 146
+    statement               go to state 338
+    simple_statement        go to state 149
+    structured_statement    go to state 150
+    assignment_statement    go to state 151
+    procedure_statement     go to state 152
+    goto_statement          go to state 153
+    conditional_statement   go to state 154
+    repetitive_statement    go to state 155
+    with_statement          go to state 156
+    if_statement            go to state 157
+    case_statement          go to state 158
+    repeat_statement        go to state 159
+    while_statement         go to state 160
+    for_statement           go to state 161
+    Identifier_or_variable  go to state 162
+
+
+state 289
+
+  161 with_statement_inner: record_variable_reference ',' . with_statement_inner
+
+    IDENTIFIER  shift, and go to state 223
+
+    with_statement_inner       go to state 339
+    record_variable_reference  go to state 225
+    Identifier_or_variable     go to state 226
+
+
+state 290
+
+  144 if_statement: TOK_IF expression TOK_THEN . statement
+  145             | TOK_IF expression TOK_THEN . statement TOK_ELSE statement
+
+    TOK_BEGIN       shift, and go to state 108
+    TOK_FOR         shift, and go to state 137
+    TOK_REPEAT      shift, and go to state 138
+    TOK_CASE        shift, and go to state 139
+    TOK_WHILE       shift, and go to state 140
+    TOK_GOTO        shift, and go to state 141
+    TOK_WITH        shift, and go to state 142
+    TOK_IF          shift, and go to state 143
+    DIGIT_SEQUENCE  shift, and go to state 18
+    IDENTIFIER      shift, and go to state 144
+
+    $default  reduce using rule 67 (statement)
+
+    label                   go to state 145
+    compound_statement      go to state 146
+    statement               go to state 340
+    simple_statement        go to state 149
+    structured_statement    go to state 150
+    assignment_statement    go to state 151
+    procedure_statement     go to state 152
+    goto_statement          go to state 153
+    conditional_statement   go to state 154
+    repetitive_statement    go to state 155
+    with_statement          go to state 156
+    if_statement            go to state 157
+    case_statement          go to state 158
+    repeat_statement        go to state 159
+    while_statement         go to state 160
+    for_statement           go to state 161
+    Identifier_or_variable  go to state 162
+
+
+state 291
+
+  169 qualifier: '.' IDENTIFIER .
+
+    $default  reduce using rule 169 (qualifier)
+
+
+state 292
+
+  139 actual_parameter_list: '(' ')' .
+
+    $default  reduce using rule 139 (actual_parameter_list)
+
+
+state 293
+
+  138 actual_parameter_list: '(' actual_parameters . ')'
+
+    ')'  shift, and go to state 341
+
+
+state 294
+
+  141 actual_parameters: Identifier_or_variable .
+  143                  | Identifier_or_variable . ',' actual_parameters
+  208 factor: Identifier_or_variable .
+
+    ','  shift, and go to state 342
+
+    ','       [reduce using rule 208 (factor)]
+    ')'       reduce using rule 141 (actual_parameters)
+    ')'       [reduce using rule 208 (factor)]
+    $default  reduce using rule 208 (factor)
+
+
+state 295
+
+  140 actual_parameters: expression .
+  142                  | expression . ',' actual_parameters
+
+    ','  shift, and go to state 343
+
+    $default  reduce using rule 140 (actual_parameters)
+
+
+state 296
+
+  171 index: '[' index_inner . ']'
+
+    ']'  shift, and go to state 344
+
+
+state 297
+
+  172 index_inner: expression .
+  173            | expression . ',' index_inner
+
+    ','  shift, and go to state 345
+
+    $default  reduce using rule 172 (index_inner)
+
+
+state 298
+
+  167 qualifiers: qualifier qualifiers .
+
+    $default  reduce using rule 167 (qualifiers)
+
+
+state 299
+
+   71 statement: label ':' simple_statement .
+
+    $default  reduce using rule 71 (statement)
+
+
+state 300
+
+   72 statement: label ':' structured_statement .
+
+    $default  reduce using rule 72 (statement)
+
+
+state 301
+
+   66 compound_statement_inner: statement ';' compound_statement_inner .
+
+    $default  reduce using rule 66 (compound_statement_inner)
+
+
+state 302
+
+  115 assignment_statement: Identifier_or_variable TOK_ASSIGN expression .
+
+    $default  reduce using rule 115 (assignment_statement)
+
+
+state 303
+
+  134 array_type_inner: ordinal_type ',' array_type_inner .
+
+    $default  reduce using rule 134 (array_type_inner)
+
+
+state 304
+
+  102 array_type: TOK_ARRAY '[' array_type_inner ']' TOK_OF . type
+
+    TOK_ARRAY           shift, and go to state 81
+    TOK_FILE            shift, and go to state 82
+    TOK_RECORD          shift, and go to state 83
+    TOK_SET             shift, and go to state 84
+    TOK_STRING          shift, and go to state 85
+    TOK_PACKED          shift, and go to state 86
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 52
+    '+'                 shift, and go to state 53
+    '-'                 shift, and go to state 54
+    IDENTIFIER          shift, and go to state 87
+    '('                 shift, and go to state 88
+    '^'                 shift, and go to state 89
+
+    constant               go to state 90
+    type                   go to state 346
+    sign                   go to state 57
+    signed_number          go to state 58
+    simple_type            go to state 92
+    structured_type        go to state 93
+    pointer_type           go to state 94
+    unsigned_number        go to state 59
+    ordinal_type           go to state 95
+    string_type            go to state 96
+    structured_type_inner  go to state 97
+    array_type             go to state 98
+    set_type               go to state 99
+    file_type              go to state 100
+    record_type            go to state 101
+    unsigned_integer       go to state 60
+    unsigned_real          go to state 61
+    subrange_type          go to state 102
+    enumerated_type        go to state 103
+
+
+state 305
+
+  180 tag_field_type: IDENTIFIER .
+
+    $default  reduce using rule 180 (tag_field_type)
+
+
+state 306
+
+  179 variant_part: TOK_CASE IDENTIFIER ':' tag_field_type . TOK_OF variant_part_inner
+
+    TOK_OF  shift, and go to state 347
+
+
+state 307
+
+  185 variant_inner: constant .
+  186              | constant . ',' variant_inner
+
+    ','  shift, and go to state 348
+
+    $default  reduce using rule 185 (variant_inner)
+
+
+state 308
+
+  178 variant_part: TOK_CASE tag_field_type TOK_OF variant_part_inner .
+
+    $default  reduce using rule 178 (variant_part)
+
+
+state 309
+
+  181 variant_part_inner: variant .
+  182                   | variant . ';' variant_part_inner
+
+    ';'  shift, and go to state 349
+
+    ';'       [reduce using rule 181 (variant_part_inner)]
+    $default  reduce using rule 181 (variant_part_inner)
+
+
+state 310
+
+  183 variant: variant_inner . ':' '(' field_list ')'
+  184        | variant_inner . ':' '(' ')'
+
+    ':'  shift, and go to state 350
+
+
+state 311
+
+  137 field_list: fixed_part ';' variant_part opt_semi_colon .
+
+    $default  reduce using rule 137 (field_list)
+
+
+state 312
+
+  114 parameter_declaration: TOK_VAR identifier_list ':' . IDENTIFIER
+
+    IDENTIFIER  shift, and go to state 351
+
+
+state 313
+
+  111 formal_parameter_list_inner: program_heading ';' formal_parameter_list_inner .
+
+    $default  reduce using rule 111 (formal_parameter_list_inner)
+
+
+state 314
+
+  113 parameter_declaration: identifier_list ':' IDENTIFIER .
+
+    $default  reduce using rule 113 (parameter_declaration)
+
+
+state 315
+
+  112 formal_parameter_list_inner: function_heading ';' formal_parameter_list_inner .
+
+    $default  reduce using rule 112 (formal_parameter_list_inner)
+
+
+state 316
+
+  110 formal_parameter_list_inner: parameter_declaration ';' formal_parameter_list_inner .
+
+    $default  reduce using rule 110 (formal_parameter_list_inner)
+
+
+state 317
+
+  158 for_statement: TOK_FOR IDENTIFIER TOK_ASSIGN expression . TOK_TO expression TOK_DO statement
+  159              | TOK_FOR IDENTIFIER TOK_ASSIGN expression . TOK_DOWNTO expression TOK_DO statement
+
+    TOK_DOWNTO  shift, and go to state 352
+    TOK_TO      shift, and go to state 353
+
+
+state 318
+
+  156 repeat_statement_inner: statement ';' repeat_statement_inner .
+
+    $default  reduce using rule 156 (repeat_statement_inner)
+
+
+state 319
+
+  154 repeat_statement: TOK_REPEAT repeat_statement_inner TOK_UNTIL expression .
+
+    $default  reduce using rule 154 (repeat_statement)
+
+
+state 320
+
+  213 factor: '(' expression ')' .
+
+    $default  reduce using rule 213 (factor)
+
+
+state 321
+
+  224 member_group: expression TOK_RANGE . expression
+
+    TOK_NIL             shift, and go to state 203
+    TOK_NOT             shift, and go to state 204
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 205
+    '+'                 shift, and go to state 53
+    '-'                 shift, and go to state 54
+    IDENTIFIER          shift, and go to state 206
+    '('                 shift, and go to state 207
+    '['                 shift, and go to state 208
+    '@'                 shift, and go to state 209
+
+    sign                     go to state 210
+    unsigned_number          go to state 211
+    unsigned_integer         go to state 60
+    unsigned_real            go to state 61
+    Identifier_or_variable   go to state 212
+    expression               go to state 354
+    simple_expression        go to state 214
+    simple_expression_inner  go to state 215
+    term                     go to state 216
+    factor                   go to state 217
+    unsigned_constant        go to state 218
+    function_call            go to state 219
+    set_constructor          go to state 220
+
+
+state 322
+
+  219 set_constructor: '[' set_constructor_inner ']' .
+
+    $default  reduce using rule 219 (set_constructor)
+
+
+state 323
+
+  222 set_constructor_inner: member_group ',' . set_constructor_inner
+
+    TOK_NIL             shift, and go to state 203
+    TOK_NOT             shift, and go to state 204
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 205
+    '+'                 shift, and go to state 53
+    '-'                 shift, and go to state 54
+    IDENTIFIER          shift, and go to state 206
+    '('                 shift, and go to state 207
+    '['                 shift, and go to state 208
+    '@'                 shift, and go to state 209
+
+    sign                     go to state 210
+    unsigned_number          go to state 211
+    unsigned_integer         go to state 60
+    unsigned_real            go to state 61
+    Identifier_or_variable   go to state 212
+    expression               go to state 265
+    simple_expression        go to state 214
+    simple_expression_inner  go to state 215
+    term                     go to state 216
+    factor                   go to state 217
+    unsigned_constant        go to state 218
+    function_call            go to state 219
+    set_constructor          go to state 220
+    set_constructor_inner    go to state 355
+    member_group             go to state 267
+
+
+state 324
+
+  152 case_inner: constant .
+  153           | constant . ',' case_inner
+
+    ','  shift, and go to state 356
+
+    $default  reduce using rule 152 (case_inner)
+
+
+state 325
+
+  146 case_statement: TOK_CASE expression TOK_OF case_statement_inner . TOK_END
+
+    TOK_END  shift, and go to state 357
+
+
+state 326
+
+  147 case_statement_inner: case .
+  148                     | case . ';' case_statement_inner
+
+    ';'  shift, and go to state 358
+
+    $default  reduce using rule 147 (case_statement_inner)
+
+
+state 327
+
+  151 case: case_inner . ':' statement
+
+    ':'  shift, and go to state 359
+
+
+state 328
+
+  188 expression: simple_expression arit simple_expression .
+
+    $default  reduce using rule 188 (expression)
+
+
+state 329
+
+  201 simple_expression_inner: term TOK_OR simple_expression_inner .
+
+    $default  reduce using rule 201 (simple_expression_inner)
+
+
+state 330
+
+  199 simple_expression_inner: term '+' simple_expression_inner .
+
+    $default  reduce using rule 199 (simple_expression_inner)
+
+
+state 331
+
+  200 simple_expression_inner: term '-' simple_expression_inner .
+
+    $default  reduce using rule 200 (simple_expression_inner)
+
+
+state 332
+
+  207 term: factor TOK_AND term .
+
+    $default  reduce using rule 207 (term)
+
+
+state 333
+
+  206 term: factor TOK_MOD term .
+
+    $default  reduce using rule 206 (term)
+
+
+state 334
+
+  205 term: factor TOK_DIV term .
+
+    $default  reduce using rule 205 (term)
+
+
+state 335
+
+  203 term: factor '*' term .
+
+    $default  reduce using rule 203 (term)
+
+
+state 336
+
+  204 term: factor '/' term .
+
+    $default  reduce using rule 204 (term)
+
+
+state 337
+
+  157 while_statement: TOK_WHILE expression TOK_DO statement .
+
+    $default  reduce using rule 157 (while_statement)
+
+
+state 338
+
+  124 with_statement: TOK_WITH with_statement_inner TOK_DO statement .
+
+    $default  reduce using rule 124 (with_statement)
+
+
+state 339
+
+  161 with_statement_inner: record_variable_reference ',' with_statement_inner .
+
+    $default  reduce using rule 161 (with_statement_inner)
+
+
+state 340
+
+  144 if_statement: TOK_IF expression TOK_THEN statement .
+  145             | TOK_IF expression TOK_THEN statement . TOK_ELSE statement
+
+    TOK_ELSE  shift, and go to state 360
+
+    $default  reduce using rule 144 (if_statement)
+
+
+state 341
+
+  138 actual_parameter_list: '(' actual_parameters ')' .
+
+    $default  reduce using rule 138 (actual_parameter_list)
+
+
+state 342
+
+  143 actual_parameters: Identifier_or_variable ',' . actual_parameters
+
+    TOK_NIL             shift, and go to state 203
+    TOK_NOT             shift, and go to state 204
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 205
+    '+'                 shift, and go to state 53
+    '-'                 shift, and go to state 54
+    IDENTIFIER          shift, and go to state 206
+    '('                 shift, and go to state 207
+    '['                 shift, and go to state 208
+    '@'                 shift, and go to state 209
+
+    sign                     go to state 210
+    unsigned_number          go to state 211
+    unsigned_integer         go to state 60
+    unsigned_real            go to state 61
+    actual_parameters        go to state 361
+    Identifier_or_variable   go to state 294
+    expression               go to state 295
+    simple_expression        go to state 214
+    simple_expression_inner  go to state 215
+    term                     go to state 216
+    factor                   go to state 217
+    unsigned_constant        go to state 218
+    function_call            go to state 219
+    set_constructor          go to state 220
+
+
+state 343
+
+  142 actual_parameters: expression ',' . actual_parameters
+
+    TOK_NIL             shift, and go to state 203
+    TOK_NOT             shift, and go to state 204
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 205
+    '+'                 shift, and go to state 53
+    '-'                 shift, and go to state 54
+    IDENTIFIER          shift, and go to state 206
+    '('                 shift, and go to state 207
+    '['                 shift, and go to state 208
+    '@'                 shift, and go to state 209
+
+    sign                     go to state 210
+    unsigned_number          go to state 211
+    unsigned_integer         go to state 60
+    unsigned_real            go to state 61
+    actual_parameters        go to state 362
+    Identifier_or_variable   go to state 294
+    expression               go to state 295
+    simple_expression        go to state 214
+    simple_expression_inner  go to state 215
+    term                     go to state 216
+    factor                   go to state 217
+    unsigned_constant        go to state 218
+    function_call            go to state 219
+    set_constructor          go to state 220
+
+
+state 344
+
+  171 index: '[' index_inner ']' .
+
+    $default  reduce using rule 171 (index)
+
+
+state 345
+
+  173 index_inner: expression ',' . index_inner
+
+    TOK_NIL             shift, and go to state 203
+    TOK_NOT             shift, and go to state 204
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 205
+    '+'                 shift, and go to state 53
+    '-'                 shift, and go to state 54
+    IDENTIFIER          shift, and go to state 206
+    '('                 shift, and go to state 207
+    '['                 shift, and go to state 208
+    '@'                 shift, and go to state 209
+
+    sign                     go to state 210
+    unsigned_number          go to state 211
+    unsigned_integer         go to state 60
+    unsigned_real            go to state 61
+    Identifier_or_variable   go to state 212
+    index_inner              go to state 363
+    expression               go to state 297
+    simple_expression        go to state 214
+    simple_expression_inner  go to state 215
+    term                     go to state 216
+    factor                   go to state 217
+    unsigned_constant        go to state 218
+    function_call            go to state 219
+    set_constructor          go to state 220
+
+
+state 346
+
+  102 array_type: TOK_ARRAY '[' array_type_inner ']' TOK_OF type .
+
+    $default  reduce using rule 102 (array_type)
+
+
+state 347
+
+  179 variant_part: TOK_CASE IDENTIFIER ':' tag_field_type TOK_OF . variant_part_inner
+
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 52
+    '+'                 shift, and go to state 53
+    '-'                 shift, and go to state 54
+    IDENTIFIER          shift, and go to state 55
+
+    constant            go to state 307
+    sign                go to state 57
+    signed_number       go to state 58
+    unsigned_number     go to state 59
+    unsigned_integer    go to state 60
+    unsigned_real       go to state 61
+    variant_part_inner  go to state 364
+    variant             go to state 309
+    variant_inner       go to state 310
+
+
+state 348
+
+  186 variant_inner: constant ',' . variant_inner
+
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 52
+    '+'                 shift, and go to state 53
+    '-'                 shift, and go to state 54
+    IDENTIFIER          shift, and go to state 55
+
+    constant          go to state 307
+    sign              go to state 57
+    signed_number     go to state 58
+    unsigned_number   go to state 59
+    unsigned_integer  go to state 60
+    unsigned_real     go to state 61
+    variant_inner     go to state 365
+
+
+state 349
+
+  182 variant_part_inner: variant ';' . variant_part_inner
+
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 52
+    '+'                 shift, and go to state 53
+    '-'                 shift, and go to state 54
+    IDENTIFIER          shift, and go to state 55
+
+    constant            go to state 307
+    sign                go to state 57
+    signed_number       go to state 58
+    unsigned_number     go to state 59
+    unsigned_integer    go to state 60
+    unsigned_real       go to state 61
+    variant_part_inner  go to state 366
+    variant             go to state 309
+    variant_inner       go to state 310
+
+
+state 350
+
+  183 variant: variant_inner ':' . '(' field_list ')'
+  184        | variant_inner ':' . '(' ')'
+
+    '('  shift, and go to state 367
+
+
+state 351
+
+  114 parameter_declaration: TOK_VAR identifier_list ':' IDENTIFIER .
+
+    $default  reduce using rule 114 (parameter_declaration)
+
+
+state 352
+
+  159 for_statement: TOK_FOR IDENTIFIER TOK_ASSIGN expression TOK_DOWNTO . expression TOK_DO statement
+
+    TOK_NIL             shift, and go to state 203
+    TOK_NOT             shift, and go to state 204
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 205
+    '+'                 shift, and go to state 53
+    '-'                 shift, and go to state 54
+    IDENTIFIER          shift, and go to state 206
+    '('                 shift, and go to state 207
+    '['                 shift, and go to state 208
+    '@'                 shift, and go to state 209
+
+    sign                     go to state 210
+    unsigned_number          go to state 211
+    unsigned_integer         go to state 60
+    unsigned_real            go to state 61
+    Identifier_or_variable   go to state 212
+    expression               go to state 368
+    simple_expression        go to state 214
+    simple_expression_inner  go to state 215
+    term                     go to state 216
+    factor                   go to state 217
+    unsigned_constant        go to state 218
+    function_call            go to state 219
+    set_constructor          go to state 220
+
+
+state 353
+
+  158 for_statement: TOK_FOR IDENTIFIER TOK_ASSIGN expression TOK_TO . expression TOK_DO statement
+
+    TOK_NIL             shift, and go to state 203
+    TOK_NOT             shift, and go to state 204
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 205
+    '+'                 shift, and go to state 53
+    '-'                 shift, and go to state 54
+    IDENTIFIER          shift, and go to state 206
+    '('                 shift, and go to state 207
+    '['                 shift, and go to state 208
+    '@'                 shift, and go to state 209
+
+    sign                     go to state 210
+    unsigned_number          go to state 211
+    unsigned_integer         go to state 60
+    unsigned_real            go to state 61
+    Identifier_or_variable   go to state 212
+    expression               go to state 369
+    simple_expression        go to state 214
+    simple_expression_inner  go to state 215
+    term                     go to state 216
+    factor                   go to state 217
+    unsigned_constant        go to state 218
+    function_call            go to state 219
+    set_constructor          go to state 220
+
+
+state 354
+
+  224 member_group: expression TOK_RANGE expression .
+
+    $default  reduce using rule 224 (member_group)
+
+
+state 355
+
+  222 set_constructor_inner: member_group ',' set_constructor_inner .
+
+    $default  reduce using rule 222 (set_constructor_inner)
+
+
+state 356
+
+  153 case_inner: constant ',' . case_inner
+
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 52
+    '+'                 shift, and go to state 53
+    '-'                 shift, and go to state 54
+    IDENTIFIER          shift, and go to state 55
+
+    constant          go to state 324
+    sign              go to state 57
+    signed_number     go to state 58
+    unsigned_number   go to state 59
+    unsigned_integer  go to state 60
+    unsigned_real     go to state 61
+    case_inner        go to state 370
+
+
+state 357
+
+  146 case_statement: TOK_CASE expression TOK_OF case_statement_inner TOK_END .
+
+    $default  reduce using rule 146 (case_statement)
+
+
+state 358
+
+  148 case_statement_inner: case ';' . case_statement_inner
+
+    DIGIT_SEQUENCE      shift, and go to state 50
+    HEX_DIGIT_SEQUENCE  shift, and go to state 51
+    STRING              shift, and go to state 52
+    '+'                 shift, and go to state 53
+    '-'                 shift, and go to state 54
+    IDENTIFIER          shift, and go to state 55
+
+    constant              go to state 324
+    sign                  go to state 57
+    signed_number         go to state 58
+    unsigned_number       go to state 59
+    unsigned_integer      go to state 60
+    unsigned_real         go to state 61
+    case_statement_inner  go to state 371
+    case                  go to state 326
+    case_inner            go to state 327
+
+
+state 359
+
+  151 case: case_inner ':' . statement
+
+    TOK_BEGIN       shift, and go to state 108
+    TOK_FOR         shift, and go to state 137
+    TOK_REPEAT      shift, and go to state 138
+    TOK_CASE        shift, and go to state 139
+    TOK_WHILE       shift, and go to state 140
+    TOK_GOTO        shift, and go to state 141
+    TOK_WITH        shift, and go to state 142
+    TOK_IF          shift, and go to state 143
+    DIGIT_SEQUENCE  shift, and go to state 18
+    IDENTIFIER      shift, and go to state 144
+
+    $default  reduce using rule 67 (statement)
+
+    label                   go to state 145
+    compound_statement      go to state 146
+    statement               go to state 372
+    simple_statement        go to state 149
+    structured_statement    go to state 150
+    assignment_statement    go to state 151
+    procedure_statement     go to state 152
+    goto_statement          go to state 153
+    conditional_statement   go to state 154
+    repetitive_statement    go to state 155
+    with_statement          go to state 156
+    if_statement            go to state 157
+    case_statement          go to state 158
+    repeat_statement        go to state 159
+    while_statement         go to state 160
+    for_statement           go to state 161
+    Identifier_or_variable  go to state 162
+
+
+state 360
+
+  145 if_statement: TOK_IF expression TOK_THEN statement TOK_ELSE . statement
+
+    TOK_BEGIN       shift, and go to state 108
+    TOK_FOR         shift, and go to state 137
+    TOK_REPEAT      shift, and go to state 138
+    TOK_CASE        shift, and go to state 139
+    TOK_WHILE       shift, and go to state 140
+    TOK_GOTO        shift, and go to state 141
+    TOK_WITH        shift, and go to state 142
+    TOK_IF          shift, and go to state 143
+    DIGIT_SEQUENCE  shift, and go to state 18
+    IDENTIFIER      shift, and go to state 144
+
+    $default  reduce using rule 67 (statement)
+
+    label                   go to state 145
+    compound_statement      go to state 146
+    statement               go to state 373
+    simple_statement        go to state 149
+    structured_statement    go to state 150
+    assignment_statement    go to state 151
+    procedure_statement     go to state 152
+    goto_statement          go to state 153
+    conditional_statement   go to state 154
+    repetitive_statement    go to state 155
+    with_statement          go to state 156
+    if_statement            go to state 157
+    case_statement          go to state 158
+    repeat_statement        go to state 159
+    while_statement         go to state 160
+    for_statement           go to state 161
+    Identifier_or_variable  go to state 162
+
+
+state 361
+
+  143 actual_parameters: Identifier_or_variable ',' actual_parameters .
+
+    $default  reduce using rule 143 (actual_parameters)
+
+
+state 362
+
+  142 actual_parameters: expression ',' actual_parameters .
+
+    $default  reduce using rule 142 (actual_parameters)
+
+
+state 363
+
+  173 index_inner: expression ',' index_inner .
+
+    $default  reduce using rule 173 (index_inner)
+
+
+state 364
+
+  179 variant_part: TOK_CASE IDENTIFIER ':' tag_field_type TOK_OF variant_part_inner .
+
+    $default  reduce using rule 179 (variant_part)
+
+
+state 365
+
+  186 variant_inner: constant ',' variant_inner .
+
+    $default  reduce using rule 186 (variant_inner)
+
+
+state 366
+
+  182 variant_part_inner: variant ';' variant_part_inner .
+
+    $default  reduce using rule 182 (variant_part_inner)
+
+
+state 367
+
+  183 variant: variant_inner ':' '(' . field_list ')'
+  184        | variant_inner ':' '(' . ')'
+
+    TOK_CASE    shift, and go to state 118
+    ')'         shift, and go to state 374
+    IDENTIFIER  shift, and go to state 15
+
+    identifier_list     go to state 119
+    field_list          go to state 375
+    fixed_part          go to state 121
+    fixed_element_list  go to state 122
+    fixed_element       go to state 123
+    variant_part        go to state 124
+
+
+state 368
+
+  159 for_statement: TOK_FOR IDENTIFIER TOK_ASSIGN expression TOK_DOWNTO expression . TOK_DO statement
+
+    TOK_DO  shift, and go to state 376
+
+
+state 369
+
+  158 for_statement: TOK_FOR IDENTIFIER TOK_ASSIGN expression TOK_TO expression . TOK_DO statement
+
+    TOK_DO  shift, and go to state 377
+
+
+state 370
+
+  153 case_inner: constant ',' case_inner .
+
+    $default  reduce using rule 153 (case_inner)
+
+
+state 371
+
+  148 case_statement_inner: case ';' case_statement_inner .
+
+    $default  reduce using rule 148 (case_statement_inner)
+
+
+state 372
+
+  151 case: case_inner ':' statement .
+
+    $default  reduce using rule 151 (case)
+
+
+state 373
+
+  145 if_statement: TOK_IF expression TOK_THEN statement TOK_ELSE statement .
+
+    $default  reduce using rule 145 (if_statement)
+
+
+state 374
+
+  184 variant: variant_inner ':' '(' ')' .
+
+    $default  reduce using rule 184 (variant)
+
+
+state 375
+
+  183 variant: variant_inner ':' '(' field_list . ')'
+
+    ')'  shift, and go to state 378
+
+
+state 376
+
+  159 for_statement: TOK_FOR IDENTIFIER TOK_ASSIGN expression TOK_DOWNTO expression TOK_DO . statement
+
+    TOK_BEGIN       shift, and go to state 108
+    TOK_FOR         shift, and go to state 137
+    TOK_REPEAT      shift, and go to state 138
+    TOK_CASE        shift, and go to state 139
+    TOK_WHILE       shift, and go to state 140
+    TOK_GOTO        shift, and go to state 141
+    TOK_WITH        shift, and go to state 142
+    TOK_IF          shift, and go to state 143
+    DIGIT_SEQUENCE  shift, and go to state 18
+    IDENTIFIER      shift, and go to state 144
+
+    $default  reduce using rule 67 (statement)
+
+    label                   go to state 145
+    compound_statement      go to state 146
+    statement               go to state 379
+    simple_statement        go to state 149
+    structured_statement    go to state 150
+    assignment_statement    go to state 151
+    procedure_statement     go to state 152
+    goto_statement          go to state 153
+    conditional_statement   go to state 154
+    repetitive_statement    go to state 155
+    with_statement          go to state 156
+    if_statement            go to state 157
+    case_statement          go to state 158
+    repeat_statement        go to state 159
+    while_statement         go to state 160
+    for_statement           go to state 161
+    Identifier_or_variable  go to state 162
+
+
+state 377
+
+  158 for_statement: TOK_FOR IDENTIFIER TOK_ASSIGN expression TOK_TO expression TOK_DO . statement
+
+    TOK_BEGIN       shift, and go to state 108
+    TOK_FOR         shift, and go to state 137
+    TOK_REPEAT      shift, and go to state 138
+    TOK_CASE        shift, and go to state 139
+    TOK_WHILE       shift, and go to state 140
+    TOK_GOTO        shift, and go to state 141
+    TOK_WITH        shift, and go to state 142
+    TOK_IF          shift, and go to state 143
+    DIGIT_SEQUENCE  shift, and go to state 18
+    IDENTIFIER      shift, and go to state 144
+
+    $default  reduce using rule 67 (statement)
+
+    label                   go to state 145
+    compound_statement      go to state 146
+    statement               go to state 380
+    simple_statement        go to state 149
+    structured_statement    go to state 150
+    assignment_statement    go to state 151
+    procedure_statement     go to state 152
+    goto_statement          go to state 153
+    conditional_statement   go to state 154
+    repetitive_statement    go to state 155
+    with_statement          go to state 156
+    if_statement            go to state 157
+    case_statement          go to state 158
+    repeat_statement        go to state 159
+    while_statement         go to state 160
+    for_statement           go to state 161
+    Identifier_or_variable  go to state 162
+
+
+state 378
+
+  183 variant: variant_inner ':' '(' field_list ')' .
+
+    $default  reduce using rule 183 (variant)
+
+
+state 379
+
+  159 for_statement: TOK_FOR IDENTIFIER TOK_ASSIGN expression TOK_DOWNTO expression TOK_DO statement .
+
+    $default  reduce using rule 159 (for_statement)
+
+
+state 380
+
+  158 for_statement: TOK_FOR IDENTIFIER TOK_ASSIGN expression TOK_TO expression TOK_DO statement .
+
+    $default  reduce using rule 158 (for_statement)
